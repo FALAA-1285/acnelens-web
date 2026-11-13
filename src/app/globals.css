@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #252525;
+  --color-body: #3b3b3b;
+  --color-muted: #5e5e5e;
+  --color-line: #e4e4e4;
+  --color-mist: #f4f4f4;
+  --color-blush: #f3e8e7;
+  --color-rose: #f1cccf;
+  --color-sand: #e8daca;
+  --color-oat: #e8e0d5;
+  --color-sage: #e3e8df;
+  --color-skin: #ead7c6;
+
+  --font-sans: "Instrument Sans Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Instrument Serif", ui-serif, Georgia, serif;
+}
+
+body {
+  background: #ffffff;
+  color: var(--color-body);
+}
+
+/* kata miring bergaya serif di dalam judul */
+.serif-em {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+}
+
+@theme {
+  --animate-pindai: pindai 2.4s ease-in-out infinite alternate;
+
+  @keyframes pindai {
+    from {
+      top: 8%;
+    }
+    to {
+      top: 88%;
+    }
+  }
+}

@@ -1,36 +1,73 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AcneLens Web
 
-## Getting Started
+Frontend Next.js untuk proyek akhir PCVK Kelompok 7: klasifikasi papula, pustula,
+dan kulit normal dengan SURF, HOG, dan SVM.
 
-First, run the development server:
+## Menjalankan
 
 ```bash
+npm install
+cp .env.example .env.local   # opsional, lihat bagian Backend
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Buka http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Halaman
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Rute       | Isi                                                    |
+| ---------- | ------------------------------------------------------ |
+| `/`        | Beranda                                                |
+| `/cek`     | Unggah foto, proses analisis, dan hasil (satu halaman) |
+| `/tentang` | Cara kerja, tiga kelas, data dan acuan, tim            |
 
-## Learn More
+## Struktur
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+├── app/                  rute halaman dan style global (tema warna & font)
+├── components/
+│   ├── cek/              alur cek kulit: unggah → analisis → hasil
+│   ├── icons.tsx         ikon SVG
+│   ├── skin-art.tsx      ilustrasi kulit pengganti foto
+│   ├── site-header.tsx
+│   ├── site-footer.tsx
+│   └── ui.tsx            tombol pill, tag, ikon bulat, judul seksi
+└── lib/
+    ├── kelas.ts          nama, warna, dan deskripsi tiap kelas
+    └── predict.ts        kirim foto ke backend + mode demo
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Backend
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Selama `NEXT_PUBLIC_API_URL` kosong, aplikasi berjalan dalam **mode demo**:
+hasil prediksi diacak dan ada keterangan di layar.
 
-## Deploy on Vercel
+Kalau backend sudah siap, isi `.env.local`:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Frontend mengirim `POST {NEXT_PUBLIC_API_URL}/predict` dengan form-data field `file`
+(JPG atau PNG, maksimal 5 MB). Respons yang diharapkan:
+
+```json
+{ "label": "pustula", "probabilities": { "papula": 0.11, "pustula": 0.86, "non_acne": 0.03 } }
+```
+
+Kalau SURF tidak menemukan keypoint dengan det(H) ≥ 1000:
+
+```json
+{ "label": null, "reason": "no_keypoint" }
+```
+
+Catatan untuk backend:
+
+- Aktifkan CORS untuk alamat frontend (misalnya `http://localhost:3000`).
+- Supaya SVM bisa mengeluarkan probabilitas, latih dengan `SVC(kernel="linear", probability=True)`.
+- Praproses di backend harus sama persis dengan saat pelatihan (grayscale, resize 256 × 300, Lanczos3).
+
+## Yang masih perlu diisi
+
+- Akurasi uji model kita di `src/app/tentang/page.tsx` (cari `TODO`).
