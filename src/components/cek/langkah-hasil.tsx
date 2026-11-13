@@ -66,10 +66,10 @@ function KartuSaran({ daftar }: { daftar: Saran[] }) {
         <Reveal
           key={s.judul}
           delay={i * 90}
-          className="group flex flex-col gap-3 rounded-[24px] bg-white p-6 transition-transform duration-700 ease-halus hover:-translate-y-1"
+          className="group flex flex-col gap-3 rounded-[24px] bg-[#faf7f4] p-6 transition-transform duration-700 ease-halus hover:-translate-y-1"
         >
           <div className="flex items-center justify-between">
-            <IconBulat size="sm" className="bg-[#f6efe9] transition-transform duration-700 ease-halus group-hover:rotate-6">
+            <IconBulat size="sm" className="bg-white transition-transform duration-700 ease-halus group-hover:rotate-6">
               {s.icon}
             </IconBulat>
             <span className="font-mono text-xs text-muted">0{i + 1}</span>
@@ -130,7 +130,7 @@ export function LangkahHasil({ foto, hasil, onUlang }: Props) {
               as="section"
               delay={120}
               aria-labelledby="judul-keyakinan"
-              className="rounded-[28px] bg-white p-7 sm:p-8"
+              className="rounded-[28px] bg-[#faf7f4] p-7 sm:p-8"
             >
               <div className="flex items-baseline justify-between gap-4">
                 <h3 id="judul-keyakinan" className="text-xl font-normal tracking-[-0.02em] text-ink">

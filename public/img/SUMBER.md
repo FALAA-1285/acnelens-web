@@ -14,12 +14,15 @@ Beberapa file adalah potongan (crop) dari foto yang sama.
 | kelas-normal-2.jpg, panduan-1.jpg | https://unsplash.com/photos/young-woman-with-natural-skin-texture-uqFmwvHa-xs |
 | kelas-papula-1.jpg, kelas-papula-2.jpg, kelas-pustula-1.jpg | https://www.pexels.com/photo/a-close-up-shot-of-a-woman-s-face-6475987/ (Hanna Pad) |
 | kelas-sorotan.jpg, kelas-pustula-2.jpg, panduan-2.jpg | https://www.pexels.com/photo/a-portrait-of-a-woman-6475978/ (Hanna Pad) |
-| ajakan.jpg | https://www.pexels.com/photo/close-up-photo-of-a-teenager-with-pimples-on-her-face-6476065/ (Hanna Pad) |
+| ajakan.jpg, kelas-papula-wajah.jpg | https://www.pexels.com/photo/close-up-photo-of-a-teenager-with-pimples-on-her-face-6476065/ (Hanna Pad) |
+| kelas-pustula-dekat.jpg, kelas-pustula-utuh.jpg | https://www.pexels.com/photo/6476082/ (di-crop + color-grade sedikit hangat) |
 | proses-sorotan.jpg | https://unsplash.com/photos/a-close-up-of-a-person-with-a-cell-phone-ANypK93WdEY |
 | etos.jpg | https://unsplash.com/photos/woman-staring-directly-at-camera-near-pink-wall-bqe0J0b26RQ |
 | metode.jpg | https://unsplash.com/photos/white-cream-smear-on-beige-surface-kD9qprR6HBI |
 | panduan-3.jpg | https://unsplash.com/photos/a-woman-washing-her-face-with-cleansing-foam-iY57M792MeA |
 | footer.jpg, tekstur.jpg | https://unsplash.com/photos/pink-and-beige-textured-stone-surface-ZdOW9Qd8mQo |
+| kelas-sorotan-2.jpg | https://truekindskincare.com/explore-2.jpg — **bukan** Unsplash/Pexels; hak cipta milik pemilik situs, perlu izin sebelum dipublikasikan |
+| proses-sorotan-2.jpg | https://truekindskincare.com/ingredients-clip.jpg — **bukan** Unsplash/Pexels; hak cipta milik pemilik situs, perlu izin sebelum dipublikasikan |
 
 Catatan: kelas-pustula-*.jpg hanya pengganti sementara. Ganti dengan contoh
 pustula dari dataset sendiri.
@@ -43,3 +46,20 @@ pustula dari dataset sendiri.
 | artikel-dokter-isi.jpg | https://www.pexels.com/photo/a-specialist-examining-a-skin-5701545/ |
 | artikel-sawo-hero.jpg | https://www.pexels.com/photo/portrait-of-a-woman-16255349/ |
 | artikel-sawo-isi.jpg | https://www.pexels.com/photo/joyful-portrait-of-a-smiling-black-woman-33170460/ |
+
+## Foto halaman Tentang (Pexels License)
+
+| File | Sumber |
+| --- | --- |
+| tentang-hero.jpg (di-crop) | https://www.pexels.com/photo/woman-s-face-3373716/ |
+| tentang-cermin.jpg | https://www.pexels.com/photo/reflection-photo-of-woman-touching-her-cheek-3785806/ |
+| tentang-tekstur.jpg | https://www.pexels.com/photo/7479568/ |
+| tentang-riset.jpg | https://www.pexels.com/photo/keyboard-and-mouse-on-beige-background-3184460/ |
+
+## Foto halaman Cek (Pexels License, di-crop + sedikit warna hangat)
+
+| File | Sumber |
+| --- | --- |
+| cek-tips-dekat.jpg | https://www.pexels.com/photo/7479574/ |
+| cek-tips-cahaya.jpg | https://www.pexels.com/photo/woman-in-white-long-sleeve-shirt-holding-an-iphone-4236823/ |
+| cek-tips-bersih.jpg | https://www.pexels.com/photo/reflection-of-a-woman-in-mirror-with-fresh-skin-6925536/ |

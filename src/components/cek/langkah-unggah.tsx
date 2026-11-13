@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRef, useState, type ChangeEvent, type DragEvent } from "react";
 import { IconCamera, IconCheck, IconClose, IconImage, IconInfo, IconShield, IconUpload } from "@/components/icons";
 import { Reveal } from "@/components/motion/reveal";
+import { Eyebrow } from "@/components/bagian";
 import { PillButton } from "@/components/ui";
 import { cekFile, MODE_DEMO } from "@/lib/predict";
 import type { Foto } from "./cek-kulit";
@@ -52,32 +53,41 @@ export function LangkahUnggah({ foto, galat, onPilih, onHapus, onGalat, onAnalis
   }
 
   return (
-    <Reveal className="mx-auto max-w-[1080px]">
-      <div
-        onDragEnter={(e) => {
-          e.preventDefault();
-          hitungSeret.current += 1;
-          setDiseret(true);
-        }}
-        onDragOver={(e) => e.preventDefault()}
-        onDragLeave={() => {
-          hitungSeret.current -= 1;
-          if (hitungSeret.current <= 0) setDiseret(false);
-        }}
-        onDrop={saatDrop}
-        className={`grid grid-cols-1 overflow-hidden rounded-[32px] bg-white shadow-[0_30px_80px_-40px_rgba(37,37,37,0.25)] ring-1 transition-all duration-700 ease-halus md:grid-cols-2 ${
-          diseret ? "scale-[1.01] ring-ink" : "ring-ink/5"
-        }`}
-      >
-        {/* ---------- Panel pratinjau ---------- */}
-        <div className="relative flex items-center justify-center bg-[#f3e8e7] px-8 py-10 sm:py-14">
+    <div
+      onDragEnter={(e) => {
+        e.preventDefault();
+        hitungSeret.current += 1;
+        setDiseret(true);
+      }}
+      onDragOver={(e) => e.preventDefault()}
+      onDragLeave={() => {
+        hitungSeret.current -= 1;
+        if (hitungSeret.current <= 0) setDiseret(false);
+      }}
+      onDrop={saatDrop}
+      className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-16"
+    >
+      {/* ---------- Bingkai lengkung: tempat seret / pratinjau ---------- */}
+      <Reveal varian="scale" className="relative lg:col-span-6">
+        <div className="relative mx-auto w-full max-w-[460px]">
           <div
-            className={`relative aspect-[4/5] w-full max-w-[230px] sm:max-w-[300px] overflow-hidden rounded-[999px_999px_28px_28px] transition-all duration-700 ease-halus ${
+            className={`relative aspect-[4/5] w-full overflow-hidden rounded-t-full rounded-b-[28px] transition-all duration-700 ease-halus ${
               foto
-                ? "shadow-[0_24px_60px_-20px_rgba(37,37,37,0.45)]"
-                : `border-[1.5px] border-dashed ${diseret ? "border-ink bg-white/70" : "border-ink/35 bg-white/50"}`
+                ? "bg-blush shadow-[0_30px_70px_-30px_rgba(37,37,37,0.45)]"
+                : diseret
+                  ? "scale-[1.02] bg-[#ecd9d7]"
+                  : "bg-[#f3e8e7]"
             }`}
           >
+            {/* garis putus-putus di dalam bingkai (hanya saat kosong) */}
+            {!foto && (
+              <span
+                aria-hidden="true"
+                className={`pointer-events-none absolute inset-3 rounded-t-full rounded-b-[20px] border-[1.5px] border-dashed transition-colors duration-500 ${
+                  diseret ? "border-ink" : "border-ink/25"
+                }`}
+              />
+            )}
             {foto ? (
               <>
                 <Image
@@ -109,7 +119,7 @@ export function LangkahUnggah({ foto, galat, onPilih, onHapus, onGalat, onAnalis
                 >
                   <IconUpload size={24} />
                 </span>
-                <span className="text-[22px] leading-tight font-normal tracking-[-0.02em] text-ink">
+                <span className="text-[clamp(24px,2.4vw,32px)] leading-tight font-normal tracking-[-0.02em] text-ink">
                   {diseret ? (
                     <>
                       Lepaskan <span className="serif-em">di sini</span>
@@ -130,12 +140,13 @@ export function LangkahUnggah({ foto, galat, onPilih, onHapus, onGalat, onAnalis
             )}
           </div>
         </div>
+      </Reveal>
 
-        {/* ---------- Panel aksi ---------- */}
-        <div className="flex flex-col justify-center gap-7 p-7 sm:p-10 lg:p-14">
+      {/* ---------- Aksi ---------- */}
+      <Reveal delay={150} className="flex flex-col gap-8 lg:col-span-6">
           <div>
-            <span className="text-[11px] font-semibold tracking-[0.16em] text-muted uppercase">Langkah 1 dari 3</span>
-            <h2 className="mt-3 text-[clamp(30px,3.6vw,46px)] leading-[1.04] font-normal tracking-[-0.035em] text-ink">
+            <Eyebrow>Langkah 1 dari 3</Eyebrow>
+            <h2 className="mt-4 text-[clamp(36px,4.6vw,64px)] leading-[1.02] font-normal tracking-[-0.035em] text-ink">
               {foto ? (
                 <>
                   Foto siap <span className="serif-em">diperiksa</span>
@@ -146,7 +157,7 @@ export function LangkahUnggah({ foto, galat, onPilih, onHapus, onGalat, onAnalis
                 </>
               )}
             </h2>
-            <p className="mt-3 leading-relaxed text-muted">
+            <p className="mt-5 max-w-[460px] leading-relaxed text-muted">
               {foto
                 ? "Pastikan area yang berjerawat terlihat jelas, lalu tekan tombol di bawah."
                 : "Pilih foto dari galeri, ambil langsung dengan kamera, atau seret fotonya ke dalam bingkai."}
@@ -170,7 +181,7 @@ export function LangkahUnggah({ foto, galat, onPilih, onHapus, onGalat, onAnalis
               </label>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div className="grid max-w-[520px] grid-cols-1 gap-3 sm:grid-cols-2">
               <label
                 htmlFor="pilih-foto"
                 className="group inline-flex min-h-14 cursor-pointer items-center justify-center gap-2.5 rounded-full bg-ink px-6 text-xs font-semibold tracking-[0.1em] text-white uppercase transition-all duration-500 ease-halus hover:shadow-[0_16px_40px_rgba(0,0,0,0.18)] has-focus-visible:outline-2"
@@ -206,22 +217,27 @@ export function LangkahUnggah({ foto, galat, onPilih, onHapus, onGalat, onAnalis
           )}
 
           {foto && (
-            <PillButton onClick={onAnalisis} className="w-full">
+            <PillButton onClick={onAnalisis} className="w-full max-w-[520px]">
               Periksa foto
             </PillButton>
           )}
 
-          <div className="flex flex-col gap-3">
-            <ul className="flex flex-wrap gap-2" aria-label="Tips foto">
-              {TIPS.map((t) => (
-                <li
-                  key={t}
-                  className="rounded-full bg-[#f6efe9] px-3 py-1.5 text-[11px] font-medium tracking-[0.02em] text-ink/80"
-                >
-                  {t}
-                </li>
-              ))}
-            </ul>
+          {/* Tips ringkas — penjelasan lengkap ada di bagian #tips di bawah */}
+          <ul className="grid max-w-[520px] grid-cols-2 border-t border-ink/15" aria-label="Tips foto">
+            {TIPS.map((t, i) => (
+              <li
+                key={t}
+                className={`flex items-center gap-2.5 border-b border-ink/15 py-3.5 text-sm text-ink ${
+                  i % 2 === 0 ? "pr-4" : "pl-4"
+                }`}
+              >
+                <IconCheck size={14} className="shrink-0 text-ink/60" />
+                {t}
+              </li>
+            ))}
+          </ul>
+
+          <div className="flex flex-col gap-2.5">
             <p className="inline-flex items-center gap-2 text-xs text-muted">
               <IconShield size={14} />
               Fotomu hanya dipakai untuk pengecekan ini.
@@ -229,9 +245,11 @@ export function LangkahUnggah({ foto, galat, onPilih, onHapus, onGalat, onAnalis
             {MODE_DEMO && (
               <p className="text-xs text-muted">Mode demo: server belum terhubung, jadi hasilnya masih acak.</p>
             )}
+            <a href="#tips" className="link-garis self-start pb-0.5 text-[11px] font-semibold tracking-[0.1em] text-ink uppercase">
+              Lihat tips memotret
+            </a>
           </div>
-        </div>
-      </div>
-    </Reveal>
+      </Reveal>
+    </div>
   );
 }

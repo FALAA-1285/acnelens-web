@@ -30,19 +30,26 @@ const KOLOM = [
   },
 ];
 
-export function FooterSitus() {
+/**
+ * `tanpaAjakan`: sembunyikan pita foto + kartu "Siap cek kulitmu?" —
+ * dipakai di halaman cek, karena pengunjung sudah berada di sana.
+ */
+export function FooterSitus({ tanpaAjakan = false }: { tanpaAjakan?: boolean }) {
   return (
-    <footer className="relative bg-white pb-10 text-ink">
+    <footer className={`relative bg-white pb-10 text-ink ${tanpaAjakan ? "border-t border-ink/10 pt-20" : ""}`}>
       {/* Pita foto besar dengan parallax */}
-      <div className="relative h-[60vh] overflow-hidden sm:h-[75vh] lg:h-[90vh]">
-        <Parallax speed={0.15} className="absolute -inset-y-[15%] inset-x-0">
-          <Image src={GAMBAR.footer} alt="" fill sizes="100vw" className="object-cover brightness-[1.05]" />
-        </Parallax>
-      </div>
+      {!tanpaAjakan && (
+        <div className="relative h-[60vh] overflow-hidden sm:h-[75vh] lg:h-[90vh]">
+          <Parallax speed={0.15} className="absolute -inset-y-[15%] inset-x-0">
+            <Image src={GAMBAR.footer} alt="" fill sizes="100vw" className="object-cover brightness-[1.05]" />
+          </Parallax>
+        </div>
+      )}
 
       <div className="mx-auto max-w-[1280px] px-5 sm:px-6">
         <div className="grid grid-cols-1 gap-12 md:grid-cols-12 md:items-end md:gap-6">
           {/* Kartu gelap yang menumpuk di atas foto */}
+          {!tanpaAjakan && (
           <Reveal className="relative z-10 -mt-32 md:order-2 md:col-span-6 md:col-start-7 md:-mt-[38vh] lg:col-span-5 lg:col-start-8">
             <div className="flex flex-col items-center bg-[#232323] px-6 pt-14 pb-10 text-center text-white sm:px-12 sm:pt-20">
               <h2 className="text-[clamp(40px,5.4vw,72px)] leading-[0.88] font-normal tracking-[-0.03em] uppercase">
@@ -70,6 +77,7 @@ export function FooterSitus() {
               </p>
             </div>
           </Reveal>
+          )}
 
           {/* Kolom link */}
           <div className="grid grid-cols-2 gap-x-6 gap-y-10 pb-2 md:order-1 md:col-span-6 md:grid-cols-3 lg:col-span-6">

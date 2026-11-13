@@ -1,18 +1,14 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { SiteHeader } from "@/components/site-header";
-import { Parallax } from "@/components/motion/parallax";
 import { Baris, Reveal } from "@/components/motion/reveal";
 import { FooterSitus } from "@/components/footer-situs";
-import { IconArrowLeft } from "@/components/icons";
-import { GAMBAR } from "@/lib/gambar";
 import { kirimFoto, type HasilPrediksi } from "@/lib/predict";
 import { LangkahUnggah } from "./langkah-unggah";
 import { LangkahAnalisis } from "./langkah-analisis";
 import { LangkahHasil } from "./langkah-hasil";
+import { AlurSingkat, KelasSingkat, TipsFoto } from "./info-cek";
 
 export type Foto = { file: File; url: string };
 
@@ -34,12 +30,12 @@ function Stepper({ tahap }: { tahap: Tahap }) {
           <li key={l.id} className="flex items-center gap-2 sm:gap-3">
             <span
               aria-current={status === "aktif" ? "step" : undefined}
-              className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-semibold tracking-[0.08em] uppercase backdrop-blur-md transition-all duration-700 ease-halus sm:px-4 sm:py-2 ${
+              className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-semibold tracking-[0.08em] uppercase transition-all duration-700 ease-halus sm:px-4 sm:py-2 ${
                 status === "aktif"
-                  ? "border-white bg-white text-ink"
+                  ? "border-ink bg-ink text-white"
                   : status === "selesai"
-                    ? "border-white/50 bg-white/15 text-white"
-                    : "border-white/25 bg-white/5 text-white/60"
+                    ? "border-ink/40 text-ink"
+                    : "border-ink/15 text-muted"
               }`}
             >
               <span className="font-mono">0{i + 1}</span>
@@ -48,7 +44,7 @@ function Stepper({ tahap }: { tahap: Tahap }) {
             {i < LANGKAH.length - 1 && (
               <span
                 aria-hidden="true"
-                className={`h-px w-5 transition-colors duration-700 sm:w-10 ${i < aktif ? "bg-white" : "bg-white/30"}`}
+                className={`h-px w-5 transition-colors duration-700 sm:w-10 ${i < aktif ? "bg-ink" : "bg-ink/15"}`}
               />
             )}
           </li>
@@ -58,10 +54,23 @@ function Stepper({ tahap }: { tahap: Tahap }) {
   );
 }
 
-const JUDUL: Record<Tahap, [string, string]> = {
-  unggah: ["Cek jenis", "jerawatmu"],
-  analisis: ["Sedang", "memproses"],
-  hasil: ["Ini hasil", "pengecekanmu"],
+// [kata serif, kata kapital, deskripsi] — gaya judul sama dengan halaman Jurnal & Tentang
+const JUDUL: Record<Tahap, [string, string, string]> = {
+  unggah: [
+    "cek",
+    "kulitmu",
+    "Unggah satu foto close-up kulit wajah. AcneLens akan memperkirakan apakah itu papula, pustula, atau kulit normal.",
+  ],
+  analisis: [
+    "sedang",
+    "diperiksa",
+    "Fotomu sedang dibaca tahap demi tahap. Biasanya hanya butuh beberapa detik.",
+  ],
+  hasil: [
+    "hasil",
+    "pengecekan",
+    "Ini perkiraan AcneLens untuk fotomu, lengkap dengan saran yang bisa kamu lakukan.",
+  ],
 };
 
 export function CekKulit() {
@@ -148,51 +157,51 @@ export function CekKulit() {
     pindah("unggah");
   }
 
-  const [judul, serif] = JUDUL[tahap];
+  const [serif, kapital, deskripsi] = JUDUL[tahap];
 
   return (
     <>
-      <SiteHeader aktif="cek" varian="hero" />
+      <SiteHeader aktif="cek" />
 
-      {/* Banner foto, gaya sama dengan hero beranda */}
-      <section className="relative flex min-h-[440px] items-end overflow-hidden bg-ink text-white sm:min-h-[520px] lg:h-[62vh]">
-        <Parallax speed={0.18} className="absolute -inset-y-[20%] inset-x-0">
-          <Image src={GAMBAR.cekBanner} alt="" fill priority sizes="100vw" className="object-cover" />
-        </Parallax>
-        <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/25 to-black/55" />
-
-        <div className="relative mx-auto w-full max-w-[1280px] px-5 pt-32 pb-12 sm:px-6 sm:pb-16">
-          <Reveal varian="fade">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.1em] text-white/75 uppercase transition-colors hover:text-white"
-            >
-              <IconArrowLeft size={14} />
-              Beranda
-            </Link>
-          </Reveal>
-
+      <main className="overflow-x-clip">
+        {/* ---------- Pembuka: judul besar di tengah ---------- */}
+        <section className="relative mx-auto max-w-[1280px] px-5 pt-24 text-center sm:px-6 sm:pt-32">
           {/* key = tahap, supaya animasi judul diputar ulang setiap ganti langkah */}
           <Reveal
             key={tahap}
             as="h1"
             varian="lines"
-            className="mt-5 text-[clamp(44px,8vw,104px)] leading-[0.98] font-normal tracking-[-0.04em]"
+            className="text-[clamp(52px,9vw,128px)] leading-[0.82] font-normal tracking-[-0.04em] text-ink"
           >
-            <Baris>{judul}</Baris>
             <Baris>
-              <span className="serif-em">{serif}</span>
+              <span className="serif-em text-[1.25em]">{serif}</span>
+            </Baris>
+            <Baris>
+              <span className="uppercase">{kapital}</span>
             </Baris>
           </Reveal>
-
-          <Reveal delay={250} className="mt-8 sm:mt-10">
+          <Reveal key={`d-${tahap}`} delay={250} className="mx-auto mt-8 max-w-[520px]">
+            <p className="leading-relaxed text-muted">{deskripsi}</p>
+          </Reveal>
+          <Reveal delay={350} className="mt-10 flex justify-center">
             <Stepper tahap={tahap} />
           </Reveal>
-        </div>
-      </section>
 
-      <main ref={konten} className="bg-[#faf6f2]">
-        <div className="mx-auto max-w-[1280px] px-5 py-16 sm:px-6 sm:py-24">
+          {/* Garis lengkung dekoratif, sama seperti halaman Jurnal */}
+          <Reveal varian="fade" className="pointer-events-none absolute top-[14%] -right-[6%] hidden w-[38%] lg:block">
+            <svg viewBox="0 0 600 300" fill="none" className="garis-anim h-auto w-full text-ink/60" aria-hidden="true">
+              <path
+                pathLength={1}
+                d="M10 40 C 180 -10, 420 10, 520 120 C 600 210, 560 290, 470 296"
+                stroke="currentColor"
+                strokeWidth="1.2"
+                strokeLinecap="round"
+              />
+            </svg>
+          </Reveal>
+        </section>
+
+        <div ref={konten} className="mx-auto max-w-[1280px] scroll-mt-24 px-5 pt-16 pb-8 sm:px-6 sm:pt-24">
           {tahap === "unggah" && (
             <LangkahUnggah
               foto={foto}
@@ -212,9 +221,19 @@ export function CekKulit() {
             <LangkahHasil foto={foto} hasil={hasil} onUlang={ulang} />
           )}
         </div>
+
+        {/* Bacaan pendukung hanya di langkah pertama */}
+        {tahap === "unggah" && (
+          <>
+            <TipsFoto />
+            <AlurSingkat />
+            <KelasSingkat />
+          </>
+        )}
+        {tahap !== "unggah" && <div className="h-24 sm:h-32" />}
       </main>
 
-      <FooterSitus />
+      <FooterSitus tanpaAjakan />
     </>
   );
 }

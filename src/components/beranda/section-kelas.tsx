@@ -34,9 +34,6 @@ function KartuKelas({ id }: { id: KelasId }) {
           sizes="(max-width: 640px) 78vw, 360px"
           className="object-cover opacity-0 transition-[opacity,transform] duration-[1.2s] ease-halus group-hover:scale-105 group-hover:opacity-100"
         />
-        <span className="absolute top-4 left-4 rounded-full bg-white/90 px-3.5 py-1.5 text-[11px] tracking-[0.06em] text-ink uppercase backdrop-blur">
-          Kelas {k.label}
-        </span>
         <span className="absolute right-4 bottom-4 flex size-11 translate-y-2 items-center justify-center rounded-full bg-white text-ink opacity-0 shadow-sm transition-all duration-500 ease-halus max-sm:translate-y-0 max-sm:opacity-100 group-hover:translate-y-0 group-hover:opacity-100">
           <IconArrowRight size={14} />
         </span>
@@ -94,7 +91,7 @@ export function SectionKelas() {
           <Parallax speed={0.1} className="absolute -inset-y-[12%] inset-x-0">
             <Image
               src={GAMBAR.kelasSorotan}
-              alt="Contoh kulit dengan jerawat meradang"
+              alt="Close-up wajah dengan kulit berbintik dan lembap"
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"
