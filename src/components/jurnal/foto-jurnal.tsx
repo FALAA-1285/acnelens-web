@@ -27,7 +27,8 @@ export function FotoJurnal({
           src={src}
           alt=""
           fill
-          priority={priority}
+          loading={priority ? "eager" : undefined}
+          fetchPriority={priority ? "high" : undefined}
           sizes={sizes}
           className={`object-cover ${
             zoomHover ? "scale-110 transition-transform duration-[1.2s] ease-halus group-hover:scale-100" : ""

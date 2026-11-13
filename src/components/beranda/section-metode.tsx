@@ -6,7 +6,7 @@ import { Eyebrow, GambarParallax } from "@/components/bagian";
 /** Grid setengah-setengah: gambar penuh di kiri, teks di kanan. */
 export function SectionMetode() {
   return (
-    <section id="metode" className="bg-[#f3e8e7]">
+    <section id="metode" className="bg-blush">
       <div className="grid grid-cols-1 lg:grid-cols-2">
         <GambarParallax
           src={GAMBAR.metode}

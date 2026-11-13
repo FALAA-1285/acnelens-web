@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { SiteHeader } from "@/components/site-header";
 import { Baris, Reveal } from "@/components/motion/reveal";
 import { FooterSitus } from "@/components/footer-situs";
-import { kirimFoto, type HasilPrediksi } from "@/lib/predict";
+import { GalatPrediksi, kirimFoto, type HasilPrediksi } from "@/lib/predict";
 import { LangkahUnggah } from "./langkah-unggah";
 import { LangkahAnalisis } from "./langkah-analisis";
 import { LangkahHasil } from "./langkah-hasil";
@@ -73,7 +73,8 @@ const JUDUL: Record<Tahap, [string, string, string]> = {
   ],
 };
 
-export function CekKulit() {
+/** `demo` ditentukan di server (lib/backend.ts): true = backend belum diatur, hasil acak. */
+export function CekKulit({ demo }: { demo: boolean }) {
   const [tahap, setTahap] = useState<Tahap>("unggah");
   const [foto, setFoto] = useState<Foto | null>(null);
   const [hasil, setHasil] = useState<HasilPrediksi | null>(null);
@@ -128,7 +129,7 @@ export function CekKulit() {
     pindah("analisis");
 
     try {
-      const res = await kirimFoto(foto.file, ctrl.signal);
+      const res = await kirimFoto(foto.file, { demo, signal: ctrl.signal });
       setHasil(res);
       setSelesai(true);
       // beri jeda sebentar supaya semua tahap terlihat selesai
@@ -136,11 +137,14 @@ export function CekKulit() {
     } catch (err) {
       if (ctrl.signal.aborted) return;
       console.error(err);
-      // fetch melempar TypeError bila jaringan gagal; galat lain berasal dari respons server
+      // GalatPrediksi membawa pesan dari server yang aman ditampilkan;
+      // fetch melempar TypeError bila jaringan gagal
       setGalat(
-        err instanceof TypeError
-          ? "Gagal menghubungi server. Periksa koneksi lalu coba lagi."
-          : "Server memberi respons yang tidak terduga. Coba lagi beberapa saat lagi.",
+        err instanceof GalatPrediksi
+          ? err.message
+          : err instanceof TypeError
+            ? "Gagal menghubungi server. Periksa koneksi lalu coba lagi."
+            : "Terjadi kesalahan yang tidak terduga. Coba lagi beberapa saat lagi.",
       );
       pindah("unggah");
     }
@@ -148,12 +152,14 @@ export function CekKulit() {
 
   function batal() {
     kontrol.current?.abort();
+    if (timerHasil.current) clearTimeout(timerHasil.current);
     pindah("unggah");
   }
 
   function ulang() {
     hapusFoto();
     setHasil(null);
+    setGalat(null);
     pindah("unggah");
   }
 
@@ -204,6 +210,7 @@ export function CekKulit() {
         <div ref={konten} className="mx-auto max-w-[1280px] scroll-mt-24 px-5 pt-16 pb-8 sm:px-6 sm:pt-24">
           {tahap === "unggah" && (
             <LangkahUnggah
+              demo={demo}
               foto={foto}
               galat={galat}
               onPilih={pilihFoto}
@@ -218,7 +225,7 @@ export function CekKulit() {
           )}
 
           {tahap === "hasil" && foto && hasil && (
-            <LangkahHasil foto={foto} hasil={hasil} onUlang={ulang} />
+            <LangkahHasil demo={demo} foto={foto} hasil={hasil} onUlang={ulang} />
           )}
         </div>
 

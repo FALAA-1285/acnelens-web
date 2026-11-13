@@ -17,6 +17,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="id" className="h-full antialiased">
+      <head>
+        {/* Tanpa JavaScript, animasi reveal tidak pernah dipicu — tampilkan kontennya langsung */}
+        <noscript>
+          <style>{`[data-reveal],[data-reveal="buka"]>*,[data-reveal] .baris>span{opacity:1!important;transform:none!important;clip-path:none!important}`}</style>
+        </noscript>
+      </head>
       <body className="min-h-full font-sans">
         <Preloader />
         {children}

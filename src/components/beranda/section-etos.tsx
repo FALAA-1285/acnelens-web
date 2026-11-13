@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { GAMBAR } from "@/lib/gambar";
+import { HASIL_TERBAIK, KESALAHAN_UJI, persen } from "@/lib/penelitian";
 import { Baris, Reveal } from "@/components/motion/reveal";
 import { GambarParallax } from "@/components/bagian";
 
@@ -7,7 +8,7 @@ const ETOS = [
   {
     icon: GAMBAR.ikon.akurasi,
     judul: "Seberapa akurat?",
-    isi: "Pada penelitian yang kami jadikan acuan, metode yang sama menebak dengan benar 93,33% dari 300 foto uji. Hasil di aplikasi ini bisa sedikit berbeda, tergantung kualitas foto.",
+    isi: `Pada penelitian yang kami jadikan acuan, metode yang sama menebak dengan benar ${persen(HASIL_TERBAIK.uji)} dari ${KESALAHAN_UJI.total} foto uji. Hasil di aplikasi ini bisa sedikit berbeda, tergantung kualitas foto.`,
   },
   {
     icon: GAMBAR.ikon.hasil,

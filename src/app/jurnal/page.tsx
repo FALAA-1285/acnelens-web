@@ -42,6 +42,7 @@ function KartuJurnal({ a, i }: { a: Artikel; i: number }) {
             src={a.gambar}
             sizes="(max-width: 1024px) 100vw, 50vw"
             zoomHover
+            priority={i === 0}
             className={`w-full ${p.foto}`}
           />
           <span className="absolute top-4 left-4 rounded-full bg-white/90 px-3.5 py-1.5 text-[11px] tracking-[0.06em] text-ink uppercase backdrop-blur">

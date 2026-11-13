@@ -6,7 +6,7 @@ import { IconBan, IconDrop, IconFocus, IconInfo, IconRefresh, IconShieldPlus, Ic
 import { Reveal } from "@/components/motion/reveal";
 import { IconBulat, PillButton, PillLink } from "@/components/ui";
 import { KELAS, URUTAN_KELAS, type KelasId } from "@/lib/kelas";
-import { formatPersen, MODE_DEMO, type HasilPrediksi } from "@/lib/predict";
+import { persenBulat, type HasilPrediksi } from "@/lib/predict";
 import type { Foto } from "./cek-kulit";
 
 type Saran = { judul: string; isi: string; icon: ReactNode };
@@ -82,16 +82,18 @@ function KartuSaran({ daftar }: { daftar: Saran[] }) {
   );
 }
 
-type Props = { foto: Foto; hasil: HasilPrediksi; onUlang: () => void };
+type Props = { demo: boolean; foto: Foto; hasil: HasilPrediksi; onUlang: () => void };
 
-export function LangkahHasil({ foto, hasil, onUlang }: Props) {
+export function LangkahHasil({ demo, foto, hasil, onUlang }: Props) {
   const berhasil = hasil.status === "berhasil";
   const kelas = berhasil ? KELAS[hasil.label] : null;
 
-  // urutkan kelas dari probabilitas terbesar
+  // urutkan kelas dari probabilitas terbesar (label sudah dipastikan = yang tertinggi di bacaRespons)
   const peringkat = berhasil
     ? [...URUTAN_KELAS].sort((a, b) => hasil.probabilitas[b] - hasil.probabilitas[a])
     : [];
+  // persen bulat yang totalnya selalu 100
+  const persen = berhasil ? persenBulat(hasil.probabilitas) : null;
 
   return (
     <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12 lg:gap-12">
@@ -139,20 +141,20 @@ export function LangkahHasil({ foto, hasil, onUlang }: Props) {
               </div>
               <div className="mt-6 flex flex-col gap-5">
                 {peringkat.map((id, i) => {
-                  const p = hasil.probabilitas[id];
+                  const p = `${persen?.[id] ?? 0}%`;
                   const utama = i === 0;
                   return (
                     <div key={id}>
                       <div className="flex items-baseline justify-between text-sm">
                         <span className={utama ? "font-medium text-ink" : "text-muted"}>{KELAS[id].nama}</span>
-                        <span className={`font-mono ${utama ? "text-ink" : "text-muted"}`}>{formatPersen(p)}</span>
+                        <span className={`font-mono ${utama ? "text-ink" : "text-muted"}`}>{p}</span>
                       </div>
                       <div aria-hidden="true" className="relative mt-2 h-px bg-ink/15">
                         <div
                           className={`absolute inset-y-[-1px] left-0 transition-[width] duration-1000 ease-halus ${
                             utama ? "bg-ink" : "bg-ink/35"
                           }`}
-                          style={{ width: formatPersen(p) }}
+                          style={{ width: p }}
                         />
                       </div>
                     </div>
@@ -182,12 +184,12 @@ export function LangkahHasil({ foto, hasil, onUlang }: Props) {
                 id="judul-hasil"
                 className="serif-em mt-5 text-[clamp(52px,7vw,92px)] leading-[0.95] tracking-[-0.02em] text-ink"
               >
-                Tidak terdeteksi
+                Tidak ada jerawat terbaca
               </h2>
               <p className="mt-4 max-w-[480px] leading-relaxed">
-                Sistem tidak menemukan bagian kulit yang cukup jelas untuk dibaca di foto ini. Menurut
-                jurnal acuan, kondisi seperti ini dianggap kulit tanpa jerawat. Kalau kamu melihat
-                jerawat di fotonya, coba foto ulang dari jarak yang lebih dekat.
+                Sistem tidak menemukan titik yang cukup menonjol (det(H) ≥ 1000) di foto ini. Sesuai alur
+                jurnal acuan, foto seperti ini dianggap tidak berjerawat. Kalau kamu melihat jerawat di
+                fotonya, kemungkinan fotonya kurang jelas: coba foto ulang dari jarak lebih dekat.
               </p>
             </Reveal>
             <KartuSaran daftar={SARAN_FOTO_ULANG} />
@@ -199,7 +201,7 @@ export function LangkahHasil({ foto, hasil, onUlang }: Props) {
           <p className="text-sm leading-normal text-muted">
             Hasil ini bukan diagnosis dokter. AcneLens hanya mengenali tiga kondisi dan bisa keliru,
             terutama pada papula yang kadang terlihat mirip kulit normal.
-            {MODE_DEMO && " Saat ini aplikasi berjalan dalam mode demo, jadi hasilnya masih acak."}
+            {demo && " Saat ini aplikasi berjalan dalam mode demo, jadi hasilnya masih acak."}
           </p>
         </div>
 

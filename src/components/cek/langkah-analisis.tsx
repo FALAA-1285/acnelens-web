@@ -4,20 +4,15 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { IconArrowRight, IconCheck } from "@/components/icons";
 import { Reveal } from "@/components/motion/reveal";
+import { TAHAP_METODE } from "@/lib/penelitian";
 import type { Foto } from "./cek-kulit";
 
-const TAHAP = [
-  { judul: "Mengubah ke hitam-putih", teknis: "Grayscale" },
-  { judul: "Menyeragamkan ukuran foto", teknis: "Resize 256 × 300, Lanczos3" },
-  { judul: "Mencari titik penting", teknis: "Keypoint SURF" },
-  { judul: "Membaca tekstur kulit", teknis: "Deskriptor HOG, ROI 64 × 64" },
-  { judul: "Menggabungkan hasil bacaan", teknis: "Gabung & normalisasi fitur" },
-  { judul: "Menentukan jenisnya", teknis: "Klasifikasi SVM linear" },
-];
+// sumber yang sama dengan halaman Tentang (#alur)
+const TAHAP = TAHAP_METODE;
 
 // Backend hanya mengirim hasil akhir, jadi tahap di layar dimajukan dengan timer
 // dan berhenti di tahap terakhir sampai respons datang.
-const JEDA_TAHAP = 650;
+const JEDA_TAHAP = 480;
 
 type Props = { foto: Foto; selesai: boolean; onBatal: () => void };
 
@@ -70,7 +65,8 @@ export function LangkahAnalisis({ foto, selesai, onBatal }: Props) {
             )}
           </h2>
           <p className="mt-4 leading-relaxed text-muted">
-            Ada enam tahap yang dijalankan sebelum jenis jerawatnya ditentukan.
+            Ada {TAHAP.length} tahap yang dijalankan sebelum jenis jerawatnya ditentukan. Urutan di
+            bawah adalah gambaran prosesnya, bukan laporan langsung dari server.
           </p>
         </Reveal>
 

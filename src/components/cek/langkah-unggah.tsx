@@ -6,7 +6,7 @@ import { IconCamera, IconCheck, IconClose, IconImage, IconInfo, IconShield, Icon
 import { Reveal } from "@/components/motion/reveal";
 import { Eyebrow } from "@/components/bagian";
 import { PillButton } from "@/components/ui";
-import { cekFile, MODE_DEMO } from "@/lib/predict";
+import { cekFile, UKURAN_MAKS_TEKS } from "@/lib/validasi-foto";
 import type { Foto } from "./cek-kulit";
 
 const TIPS = ["Foto dari dekat", "Cahaya merata", "Tanpa filter", "Tidak buram"];
@@ -17,6 +17,7 @@ function ukuranFile(byte: number) {
 }
 
 type Props = {
+  demo: boolean;
   foto: Foto | null;
   galat: string | null;
   onPilih: (file: File) => void;
@@ -25,7 +26,7 @@ type Props = {
   onAnalisis: () => void;
 };
 
-export function LangkahUnggah({ foto, galat, onPilih, onHapus, onGalat, onAnalisis }: Props) {
+export function LangkahUnggah({ demo, foto, galat, onPilih, onHapus, onGalat, onAnalisis }: Props) {
   const [diseret, setDiseret] = useState(false);
   // dragenter/dragleave juga terpicu oleh elemen anak, jadi dihitung
   const hitungSeret = useRef(0);
@@ -76,7 +77,7 @@ export function LangkahUnggah({ foto, galat, onPilih, onHapus, onGalat, onAnalis
                 ? "bg-blush shadow-[0_30px_70px_-30px_rgba(37,37,37,0.45)]"
                 : diseret
                   ? "scale-[1.02] bg-[#ecd9d7]"
-                  : "bg-[#f3e8e7]"
+                  : "bg-blush"
             }`}
           >
             {/* garis putus-putus di dalam bingkai (hanya saat kosong) */}
@@ -135,7 +136,7 @@ export function LangkahUnggah({ foto, galat, onPilih, onHapus, onGalat, onAnalis
                     </>
                   )}
                 </span>
-                <span className="text-[11px] tracking-[0.12em] text-muted uppercase">JPG / PNG / WEBP · maks 5 MB</span>
+                <span className="text-[11px] tracking-[0.12em] text-muted uppercase">JPG / PNG / WEBP · maks {UKURAN_MAKS_TEKS}</span>
               </label>
             )}
           </div>
@@ -242,7 +243,7 @@ export function LangkahUnggah({ foto, galat, onPilih, onHapus, onGalat, onAnalis
               <IconShield size={14} />
               Fotomu hanya dipakai untuk pengecekan ini.
             </p>
-            {MODE_DEMO && (
+            {demo && (
               <p className="text-xs text-muted">Mode demo: server belum terhubung, jadi hasilnya masih acak.</p>
             )}
             <a href="#tips" className="link-garis self-start pb-0.5 text-[11px] font-semibold tracking-[0.1em] text-ink uppercase">

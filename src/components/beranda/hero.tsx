@@ -8,11 +8,14 @@ import { tungguPreloader } from "@/components/motion/preloader";
 
 export function HeroBeranda() {
   const [loaded, setLoaded] = useState(false);
-  const [scrollY, setScrollY] = useState(0);
   // null = belum diketahui (SSR / sebelum mount): tampilkan poster saja
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
   const [reduceMotion, setReduceMotion] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
+  // Parallax ditulis langsung ke style elemen (bukan lewat state), supaya
+  // scroll tidak membuat seluruh hero dirender ulang setiap frame.
+  const videoRef = useRef<HTMLDivElement>(null);
+  const teksRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const mqMobile = window.matchMedia("(max-width: 767px)");
@@ -28,34 +31,43 @@ export function HeroBeranda() {
     // judul & CTA mulai beranimasi setelah layar pembuka selesai
     const lepas = tungguPreloader(() => setLoaded(true));
 
-    // Parallax: maksimal satu update per frame
+    return () => {
+      lepas();
+      mqMobile.removeEventListener("change", sync);
+      mqMotion.removeEventListener("change", sync);
+    };
+  }, []);
+
+  useEffect(() => {
+    const terapkan = () => {
+      const y = reduceMotion ? 0 : window.scrollY;
+      const hp = isMobile === true;
+      if (videoRef.current) {
+        videoRef.current.style.transform = `translate3d(0, ${y * (hp ? 0.15 : 0.28)}px, 0)`;
+      }
+      if (teksRef.current) {
+        teksRef.current.style.opacity = String(Math.max(0, 1 - y / (hp ? 480 : 650)));
+        teksRef.current.style.transform = `translate3d(0, -${y * (hp ? 0.16 : 0.22)}px, 0)`;
+      }
+    };
+    terapkan();
+
+    // maksimal satu update per frame, dan hanya selama hero masih terlihat
     let rafId = 0;
     const handleScroll = () => {
       if (rafId) return;
       rafId = requestAnimationFrame(() => {
         rafId = 0;
         const el = sectionRef.current;
-        if (!el) return;
-        if (el.getBoundingClientRect().bottom > 0) {
-          setScrollY(window.scrollY);
-        }
+        if (el && el.getBoundingClientRect().bottom > 0) terapkan();
       });
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
-
     return () => {
-      lepas();
-      mqMobile.removeEventListener("change", sync);
-      mqMotion.removeEventListener("change", sync);
       window.removeEventListener("scroll", handleScroll);
       cancelAnimationFrame(rafId);
     };
-  }, []);
-
-  const y = reduceMotion ? 0 : scrollY;
-  const parallaxVideoY = y * (isMobile ? 0.15 : 0.28);
-  const textOpacity = Math.max(0, 1 - y / (isMobile ? 480 : 650));
-  const textTranslateY = y * (isMobile ? 0.16 : 0.22);
+  }, [isMobile, reduceMotion]);
 
   const poster = isMobile ? GAMBAR.heroPosterMobile : GAMBAR.heroPoster;
 
@@ -63,16 +75,13 @@ export function HeroBeranda() {
     <section
       ref={sectionRef}
       id="intro"
-      className="relative flex h-[100dvh] min-h-[560px] w-full items-center justify-center overflow-hidden bg-[#f3e8e7]"
+      className="relative flex h-[100dvh] min-h-[560px] w-full items-center justify-center overflow-hidden bg-blush"
     >
       {/* VIDEO LATAR DENGAN PARALLAX */}
       <div className="pointer-events-none absolute inset-0 h-full w-full overflow-hidden">
         <div className="absolute inset-0 z-[2] bg-black/30" />
 
-        <div
-          className="absolute -top-[12%] left-0 h-[124%] w-full will-change-transform"
-          style={{ transform: `translate3d(0, ${parallaxVideoY}px, 0)` }}
-        >
+        <div ref={videoRef} className="absolute -top-[12%] left-0 h-[124%] w-full will-change-transform">
           {isMobile === null ? (
             <picture>
               <source media="(max-width: 767px)" srcSet={GAMBAR.heroPosterMobile} />
@@ -99,11 +108,8 @@ export function HeroBeranda() {
 
       {/* JUDUL */}
       <div
+        ref={teksRef}
         className="relative z-[3] mx-auto mb-16 flex max-w-[960px] flex-col items-center px-5 text-center will-change-transform sm:mb-20 md:mb-28 md:px-6"
-        style={{
-          opacity: textOpacity,
-          transform: `translate3d(0, -${textTranslateY}px, 0)`,
-        }}
       >
         <h1 className="text-[clamp(36px,8.5vw,90px)] font-normal leading-[1.08] tracking-[-0.035em] text-white sm:leading-[1.04]">
           <span className="block overflow-hidden">

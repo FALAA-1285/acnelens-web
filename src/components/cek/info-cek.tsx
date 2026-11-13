@@ -98,7 +98,7 @@ export function TipsFoto() {
 
 export function AlurSingkat() {
   return (
-    <section className="relative overflow-hidden bg-[#f3e8e7] py-24 sm:py-32">
+    <section className="relative overflow-hidden bg-blush py-24 sm:py-32">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 opacity-[0.07]"

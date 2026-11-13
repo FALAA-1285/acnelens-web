@@ -28,13 +28,6 @@ export const IconArrowRight = (p: IconProps) => (
   </Icon>
 );
 
-export const IconArrowLeft = (p: IconProps) => (
-  <Icon {...p}>
-    <path d="M19 12H5" />
-    <path d="M11 6l-6 6 6 6" />
-  </Icon>
-);
-
 export const IconUpload = (p: IconProps) => (
   <Icon {...p}>
     <path d="M12 16V4" />
@@ -130,26 +123,7 @@ export const IconRefresh = (p: IconProps) => (
   </Icon>
 );
 
-/* ikon untuk tiap tahap metode */
-export const IconKeypoint = (p: IconProps) => (
-  <Icon {...p}>
-    <circle cx="6" cy="7" r="1.6" />
-    <circle cx="17" cy="6" r="1.6" />
-    <circle cx="12" cy="13" r="1.6" />
-    <circle cx="7" cy="18" r="1.6" />
-    <circle cx="18" cy="17" r="1.6" />
-  </Icon>
-);
-
-export const IconGrid = (p: IconProps) => (
-  <Icon {...p}>
-    <rect x="4" y="4" width="7" height="7" rx="1.5" />
-    <rect x="13" y="4" width="7" height="7" rx="1.5" />
-    <rect x="4" y="13" width="7" height="7" rx="1.5" />
-    <rect x="13" y="13" width="7" height="7" rx="1.5" />
-  </Icon>
-);
-
+/* ikon klasifikasi: dua kelompok titik yang dipisah garis */
 export const IconSplit = (p: IconProps) => (
   <Icon {...p}>
     <path d="M4 20L20 4" />

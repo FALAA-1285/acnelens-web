@@ -29,7 +29,8 @@ export function SiteHeader({
   aktif,
   varian = "standar",
 }: {
-  aktif: Halaman;
+  /** kosongkan untuk halaman di luar menu (mis. 404) */
+  aktif?: Halaman;
   /** "hero": menempel di atas, transparan di atas foto/video, putih setelah di-scroll */
   varian?: "standar" | "hero";
 }) {

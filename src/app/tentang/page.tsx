@@ -12,15 +12,20 @@ import { GAMBAR } from "@/lib/gambar";
 import { KELAS, type KelasId } from "@/lib/kelas";
 import {
   AKURASI,
+  AKURASI_APLIKASI,
+  CELAH,
   CELLSIZE,
   DATASET,
+  HASIL_TERBAIK,
   JURNAL_ACUAN,
-  KESALAHAN_UJI,
   PARAMETER,
   SIMILARITY,
+  TAHAP_METODE,
   TERBAIK,
   persen,
 } from "@/lib/penelitian";
+import { KETERBATASAN, RENCANA, TIM } from "@/lib/tentang";
+import { Angka, TitikUji } from "@/components/tentang/angka";
 
 export const metadata: Metadata = {
   title: "Tentang",
@@ -28,158 +33,8 @@ export const metadata: Metadata = {
     "Latar belakang, metode, dataset, dan hasil penelitian SURF + HOG + SVM yang menjadi dasar AcneLens.",
 };
 
-/* ------------------------------------------------------------------ */
-/* Data halaman                                                        */
-/* ------------------------------------------------------------------ */
-
-const CELAH = [
-  {
-    judul: "GLCM + SVM",
-    isi: "Menekankan tekstur statistik, tetapi belum memakai gabungan keypoint lokal dan orientasi gradien untuk membedakan papula, pustula, dan kulit normal.",
-  },
-  {
-    judul: "CNN",
-    isi: "Kuat untuk klasifikasi citra, tetapi butuh data besar, komputasi tinggi, dan fiturnya sulit ditafsirkan.",
-  },
-  {
-    judul: "SURF atau HOG saja",
-    isi: "Masing-masing hanya menangkap satu sisi: SURF unggul pada lokasi struktur lesi, HOG unggul pada pola tekstur tepi.",
-  },
-];
-
-const ALUR = [
-  {
-    judul: "Ubah ke grayscale",
-    isi: "Foto RGB diubah ke skala abu-abu supaya komputasi lebih ringan dan fokus pada intensitas piksel.",
-  },
-  {
-    judul: "Seragamkan ukuran",
-    isi: "Citra diubah ke 256 × 300 piksel. Tiga cara interpolasi diuji: bicubic, bilinear, dan Lanczos3.",
-  },
-  {
-    judul: "Cari titik penting (SURF)",
-    isi: "Citra integral dan determinan Hessian dipakai untuk mencari keypoint. Hanya keypoint dengan det(H) ≥ 1000 yang dipakai.",
-  },
-  {
-    judul: "Bentuk area fokus",
-    isi: "Keypoint terkuat menjadi pusat region of interest (ROI). Respons Haar wavelet pada 4 × 4 subregion menghasilkan 64 fitur SURF.",
-  },
-  {
-    judul: "Baca tekstur (HOG)",
-    isi: "ROI dinormalisasi ke 64 × 64 piksel. Arah gradien dikelompokkan ke 9 bin, dengan cell 8 × 8 dan blok 2 × 2.",
-  },
-  {
-    judul: "Gabungkan fitur",
-    isi: "Fitur SURF dan HOG disatukan menjadi satu vektor, lalu dinormalisasi.",
-  },
-  {
-    judul: "Klasifikasi SVM",
-    isi: "SVM kernel linear menentukan kelasnya: kulit normal, papula, atau pustula. Model divalidasi dengan cross-validation.",
-  },
-];
-
-const KETERBATASAN = [
-  {
-    judul: "Hanya tiga kelas",
-    isi: "Komedo, nodul, dan kista tidak dikenali. Foto dengan jenis jerawat lain bisa salah ditebak.",
-  },
-  {
-    judul: "Papula paling sulit",
-    isi: "Warna dan tonjolan papula bisa samar, sehingga kadang dianggap kulit normal.",
-  },
-  {
-    judul: "Peka terhadap cahaya",
-    isi: "Pencahayaan yang tidak merata atau foto yang buram dapat menurunkan ketepatan hasil.",
-  },
-  {
-    judul: "Bukan diagnosis",
-    isi: "AcneLens membantu skrining awal. Keputusan perawatan tetap sebaiknya bersama dokter kulit.",
-  },
-];
-
-const RENCANA = [
-  "Menambah jumlah dan variasi dataset",
-  "Mengendalikan variasi pencahayaan foto",
-  "Mencoba kombinasi fitur lain atau deep learning ringan",
-];
-
-const TIM = [
-  {
-    nama: "Ahmad Falahi",
-    inisial: "AF",
-    warna: "bg-rose",
-    tugas: "Dataset, rancangan dan pengembangan aplikasi, integrasi model",
-  },
-  {
-    nama: "Amin Aziz Sudjud",
-    inisial: "AA",
-    warna: "bg-sand",
-    tugas: "Persiapan data, fitur SURF, penggabungan fitur, pelatihan SVM",
-  },
-  {
-    nama: "Muhammad Faiq Nabil Saputra",
-    inisial: "MF",
-    warna: "bg-sage",
-    tugas: "Preprocessing, fitur HOG, evaluasi dan penyimpanan model",
-  },
-];
-
 // urutan sesuai label di dataset: 0 normal, 1 papula, 2 pustula
 const URUTAN_LABEL: KelasId[] = ["non_acne", "papula", "pustula"];
-
-/* ------------------------------------------------------------------ */
-/* Komponen kecil                                                      */
-/* ------------------------------------------------------------------ */
-
-function Angka({ nilai, ket, besar = false }: { nilai: string; ket: string; besar?: boolean }) {
-  return (
-    <div>
-      <strong
-        className={`block font-normal tracking-[-0.03em] text-ink ${
-          besar ? "text-[clamp(44px,5vw,72px)] leading-none" : "text-[clamp(30px,3vw,40px)] leading-tight"
-        }`}
-      >
-        {nilai}
-      </strong>
-      <span className="mt-2 block text-sm leading-snug text-muted">{ket}</span>
-    </div>
-  );
-}
-
-/** 300 titik = 300 citra uji. Titik berwarna = salah klasifikasi. */
-function TitikUji() {
-  const { total, papulaJadiNormal, papulaJadiPustula } = KESALAHAN_UJI;
-  const benar = total - papulaJadiNormal - papulaJadiPustula;
-  const titik = [
-    ...Array.from({ length: benar }, () => "bg-ink/15"),
-    ...Array.from({ length: papulaJadiNormal }, () => "bg-[#d98f96]"),
-    ...Array.from({ length: papulaJadiPustula }, () => "bg-[#b8925f]"),
-  ];
-  return (
-    <div>
-      <div
-        className="grid grid-cols-[repeat(20,minmax(0,1fr))] gap-1.5 sm:grid-cols-[repeat(30,minmax(0,1fr))]"
-        role="img"
-        aria-label={`${benar} dari ${total} citra uji benar, ${papulaJadiNormal} papula terbaca kulit normal, ${papulaJadiPustula} papula terbaca pustula`}
-      >
-        {titik.map((warna, i) => (
-          <span key={i} className={`aspect-square rounded-full ${warna}`} />
-        ))}
-      </div>
-      <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted">
-        <span className="inline-flex items-center gap-2">
-          <span className="size-2.5 rounded-full bg-ink/15" /> {benar} benar
-        </span>
-        <span className="inline-flex items-center gap-2">
-          <span className="size-2.5 rounded-full bg-[#d98f96]" /> {papulaJadiNormal} papula → kulit normal
-        </span>
-        <span className="inline-flex items-center gap-2">
-          <span className="size-2.5 rounded-full bg-[#b8925f]" /> {papulaJadiPustula} papula → pustula
-        </span>
-      </div>
-    </div>
-  );
-}
 
 /* ------------------------------------------------------------------ */
 /* Halaman                                                             */
@@ -244,7 +99,7 @@ export default function Tentang() {
             {[
               { nilai: "3", ket: "kelas: kulit normal, papula, pustula" },
               { nilai: "1.500", ket: "citra wajah, 500 per kelas" },
-              { nilai: "93,33%", ket: "akurasi uji di jurnal acuan" },
+              { nilai: persen(HASIL_TERBAIK.uji), ket: "akurasi uji di jurnal acuan" },
               { nilai: "SURF + HOG", ket: "fitur yang digabungkan, lalu SVM" },
             ].map((a, i) => (
               <Reveal key={a.ket} delay={i * 90} className="border-t border-ink/15 pt-5">
@@ -323,7 +178,7 @@ export default function Tentang() {
         </section>
 
         {/* ---------- 3. Celah penelitian ---------- */}
-        <section id="celah" className="relative overflow-hidden bg-[#f3e8e7] py-24 sm:py-36">
+        <section id="celah" className="relative overflow-hidden bg-blush py-24 sm:py-36">
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-0 opacity-[0.07]"
@@ -460,7 +315,7 @@ export default function Tentang() {
 
             <div className="lg:col-span-7">
               <ol className="border-t border-ink/15">
-                {ALUR.map((a, i) => (
+                {TAHAP_METODE.map((a, i) => (
                   <Reveal
                     as="li"
                     key={a.judul}
@@ -470,7 +325,8 @@ export default function Tentang() {
                     <span className="serif-em text-[40px] leading-none text-ink/30 sm:text-[56px]">{i + 1}</span>
                     <div>
                       <h3 className="text-xl font-medium tracking-[-0.02em] text-ink sm:text-2xl">{a.judul}</h3>
-                      <p className="mt-2 leading-relaxed text-muted">{a.isi}</p>
+                      <span className="mt-1 block font-mono text-xs text-muted">{a.teknis}</span>
+                      <p className="mt-3 leading-relaxed text-muted">{a.isi}</p>
                     </div>
                   </Reveal>
                 ))}
@@ -478,8 +334,8 @@ export default function Tentang() {
               <Reveal className="mt-10 rounded-[24px] bg-white p-7 sm:p-8">
                 <p className="text-sm leading-relaxed text-muted">
                   <strong className="font-medium text-ink">Saat foto diuji:</strong> kalau tidak ada
-                  keypoint yang memenuhi det(H) ≥ 1000, sistem tidak menemukan lesi jerawat pada foto.
-                  Kalau ada, sistem lanjut menentukan apakah itu papula atau pustula.
+                  keypoint yang memenuhi det(H) ≥ 1000, foto dianggap tidak berjerawat (di aplikasi tampil
+                  sebagai &ldquo;tidak ada jerawat terbaca&rdquo;). Kalau ada, SVM menentukan kelasnya.
                 </p>
               </Reveal>
             </div>
@@ -487,7 +343,7 @@ export default function Tentang() {
         </section>
 
         {/* ---------- 6. Dataset ---------- */}
-        <section id="dataset" className="bg-[#f3e8e7]">
+        <section id="dataset" className="bg-blush">
           <div className="grid grid-cols-1 lg:grid-cols-2">
             <GambarParallax
               src={GAMBAR.tentang.riset}
@@ -622,13 +478,13 @@ export default function Tentang() {
               <Reveal delay={200} className="grid grid-cols-2 gap-8 lg:col-span-6">
                 <div className="border-t border-white/20 pt-5">
                   <strong className="block text-[clamp(52px,6vw,88px)] leading-none font-normal tracking-[-0.04em]">
-                    93,33%
+                    {persen(HASIL_TERBAIK.uji)}
                   </strong>
                   <span className="mt-2 block text-sm text-white/60">akurasi data uji</span>
                 </div>
                 <div className="border-t border-white/20 pt-5">
                   <strong className="block text-[clamp(52px,6vw,88px)] leading-none font-normal tracking-[-0.04em]">
-                    94,75%
+                    {persen(HASIL_TERBAIK.latih)}
                   </strong>
                   <span className="mt-2 block text-sm text-white/60">akurasi data latih</span>
                 </div>
@@ -646,7 +502,7 @@ export default function Tentang() {
                     </span>
                   </div>
                   <div className="mt-3 h-1.5 rounded-full bg-white/10">
-                    <div className="h-full rounded-full bg-[#e8daca]" style={{ width: `${s.nilai * 100}%` }} />
+                    <div className="h-full rounded-full bg-sand" style={{ width: `${s.nilai * 100}%` }} />
                   </div>
                   <p className="mt-3 text-sm text-white/60">{s.arti}</p>
                 </Reveal>
@@ -671,7 +527,7 @@ export default function Tentang() {
               </div>
               <div className="shrink-0">
                 <strong className="block text-[clamp(40px,4vw,56px)] leading-none font-normal tracking-[-0.03em]">
-                  92,00%
+                  {AKURASI_APLIKASI.toLocaleString("id-ID", { minimumFractionDigits: 2 })}%
                 </strong>
                 <span className="mt-2 block text-sm text-white/60">akurasi uji model AcneLens</span>
               </div>
