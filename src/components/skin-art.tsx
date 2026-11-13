@@ -1,12 +1,5 @@
 import type { KelasId } from "@/lib/kelas";
 
-// titik-titik pori pada ilustrasi kulit
-const PORI = [
-  [60, 80], [110, 60], [170, 95], [240, 70], [300, 110], [340, 60],
-  [80, 150], [210, 140], [330, 170], [50, 230], [120, 260], [260, 240],
-  [350, 250], [90, 330], [180, 320], [250, 350], [320, 330], [150, 210],
-];
-
 function Papula({ x, y, r }: { x: number; y: number; r: number }) {
   return (
     <g>
@@ -23,34 +16,6 @@ function Pustula({ x, y, r }: { x: number; y: number; r: number }) {
       <circle cx={x} cy={y} r={r} fill="#e3a598" />
       <circle cx={x} cy={y - r * 0.25} r={r * 0.42} fill="#faf1e2" />
     </g>
-  );
-}
-
-/* Ilustrasi potongan kulit, dipakai sebagai pengganti foto */
-export function KulitIlustrasi({
-  className = "",
-  label,
-}: {
-  className?: string;
-  label?: string;
-}) {
-  return (
-    <svg
-      viewBox="0 0 400 400"
-      preserveAspectRatio="xMidYMid slice"
-      className={`block size-full ${className}`}
-      role={label ? "img" : undefined}
-      aria-label={label}
-      aria-hidden={label ? undefined : true}
-    >
-      <rect width="400" height="400" fill="#ead7c6" />
-      {PORI.map(([x, y]) => (
-        <circle key={`${x}-${y}`} cx={x} cy={y} r={2.2} fill="#d6bea9" />
-      ))}
-      <Papula x={150} y={170} r={15} />
-      <Pustula x={255} y={205} r={14} />
-      <Papula x={200} y={285} r={10} />
-    </svg>
   );
 }
 

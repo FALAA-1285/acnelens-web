@@ -1,6 +1,6 @@
 export type KelasId = "papula" | "pustula" | "non_acne";
 
-export const URUTAN_KELAS: KelasId[] = ["papula", "pustula", "non_acne"];
+export const URUTAN_KELAS: readonly KelasId[] = ["papula", "pustula", "non_acne"];
 
 type InfoKelas = {
   nama: string;

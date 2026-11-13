@@ -35,13 +35,6 @@ export const IconArrowLeft = (p: IconProps) => (
   </Icon>
 );
 
-export const IconArrowUpRight = (p: IconProps) => (
-  <Icon {...p}>
-    <path d="M7 17L17 7" />
-    <path d="M8 7h9v9" />
-  </Icon>
-);
-
 export const IconUpload = (p: IconProps) => (
   <Icon {...p}>
     <path d="M12 16V4" />
@@ -62,13 +55,6 @@ export const IconCamera = (p: IconProps) => (
   <Icon {...p}>
     <path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" />
     <circle cx="12" cy="13" r="3.5" />
-  </Icon>
-);
-
-export const IconSearch = (p: IconProps) => (
-  <Icon {...p}>
-    <circle cx="11" cy="11" r="6" />
-    <path d="M20 20l-4.5-4.5" />
   </Icon>
 );
 
@@ -109,13 +95,6 @@ export const IconBan = (p: IconProps) => (
   </Icon>
 );
 
-export const IconEye = (p: IconProps) => (
-  <Icon {...p}>
-    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" />
-    <circle cx="12" cy="12" r="3" />
-  </Icon>
-);
-
 export const IconShield = (p: IconProps) => (
   <Icon {...p}>
     <path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6z" />
@@ -148,13 +127,6 @@ export const IconRefresh = (p: IconProps) => (
   <Icon {...p}>
     <path d="M20 12a8 8 0 1 1-2.3-5.6" />
     <path d="M20 4v5h-5" />
-  </Icon>
-);
-
-export const IconFile = (p: IconProps) => (
-  <Icon {...p}>
-    <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" />
-    <path d="M14 3v5h5" />
   </Icon>
 );
 

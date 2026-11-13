@@ -49,8 +49,9 @@ Kalau backend sudah siap, isi `.env.local`:
 NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
 
-Frontend mengirim `POST {NEXT_PUBLIC_API_URL}/predict` dengan form-data field `file`
-(JPG atau PNG, maksimal 5 MB). Respons yang diharapkan:
+Frontend mengirim `POST /api/predict` yang bertindak sebagai API Proxy (BFF)
+ke backend Python dengan form-data field `file` (JPG, PNG, atau WebP, maksimal 5 MB).
+Respons yang diharapkan:
 
 ```json
 { "label": "pustula", "probabilities": { "papula": 0.11, "pustula": 0.86, "non_acne": 0.03 } }
@@ -64,10 +65,5 @@ Kalau SURF tidak menemukan keypoint dengan det(H) ≥ 1000:
 
 Catatan untuk backend:
 
-- Aktifkan CORS untuk alamat frontend (misalnya `http://localhost:3000`).
 - Supaya SVM bisa mengeluarkan probabilitas, latih dengan `SVC(kernel="linear", probability=True)`.
 - Praproses di backend harus sama persis dengan saat pelatihan (grayscale, resize 256 × 300, Lanczos3).
-
-## Yang masih perlu diisi
-
-- Akurasi uji model kita di `src/app/tentang/page.tsx` (cari `TODO`).

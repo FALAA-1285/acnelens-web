@@ -3,6 +3,7 @@ import "@fontsource-variable/instrument-sans";
 import "@fontsource/instrument-serif/400.css";
 import "@fontsource/instrument-serif/400-italic.css";
 import "./globals.css";
+import { Preloader } from "@/components/motion/preloader";
 
 export const metadata: Metadata = {
   title: {
@@ -16,7 +17,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="id" className="h-full antialiased">
-      <body className="min-h-full font-sans">{children}</body>
+      <body className="min-h-full font-sans">
+        <Preloader />
+        {children}
+      </body>
     </html>
   );
 }

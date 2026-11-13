@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { Halaman } from "@/components/motion/halaman";
 import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
+import { FooterSitus } from "@/components/footer-situs";
+import { SmoothScroll } from "@/components/motion/smooth-scroll";
 import { Tag } from "@/components/ui";
 import { IkonKelas } from "@/components/skin-art";
 import { KELAS, URUTAN_KELAS } from "@/lib/kelas";
@@ -60,7 +62,8 @@ function Angka({ nilai, ket }: { nilai: string; ket: string }) {
 
 export default function Tentang() {
   return (
-    <>
+    <Halaman>
+      <SmoothScroll />
       <SiteHeader aktif="tentang" />
       <main>
         <section className="mx-auto flex max-w-[1280px] flex-col gap-6 px-6 pt-18">
@@ -162,9 +165,8 @@ export default function Tentang() {
                   </a>
                 </span>
                 <div className="grid grid-cols-2 gap-3 border-t border-[#ececec] pt-4.5">
-                  <Angka nilai="93,33%" ket="akurasi uji di jurnal" />
-                  {/* TODO: ganti dengan akurasi uji model kita setelah evaluasi */}
-                  <Angka nilai="–" ket="akurasi uji model AcneLens" />
+                  <Angka nilai="93,33%" ket="akurasi uji di jurnal acuan" />
+                  <Angka nilai="92,00%" ket="akurasi uji model AcneLens" />
                 </div>
               </div>
             </div>
@@ -193,7 +195,7 @@ export default function Tentang() {
           </div>
         </section>
       </main>
-      <SiteFooter />
-    </>
+      <FooterSitus />
+    </Halaman>
   );
 }
