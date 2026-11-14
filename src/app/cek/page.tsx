@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { Halaman } from "@/components/motion/halaman";
 import { CekKulit } from "@/components/cek/cek-kulit";
 import { SmoothScroll } from "@/components/motion/smooth-scroll";
@@ -8,7 +9,10 @@ export const metadata: Metadata = {
   title: "Cek kulit",
 };
 
-export default function HalamanCek() {
+export const instant = false;
+
+export default async function HalamanCek() {
+  await connection();
   return (
     <Halaman>
       <SmoothScroll />

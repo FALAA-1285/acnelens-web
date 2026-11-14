@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
-import { POST } from "./route";
+import { POST, sanitasiNamaBerkas } from "./route";
 import { UKURAN_MAKS } from "@/lib/validasi-foto";
 
 const JPG = new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 0, 0x10, 0x4a, 0x46]);
@@ -128,5 +128,18 @@ describe("POST /api/predict", () => {
     for (let i = 0; i < 13; i++) status.push((await POST(await permintaan(formFoto(), ip))).status);
     expect(status.slice(0, 12).every((s) => s === 200)).toBe(true);
     expect(status[12]).toBe(429);
+  });
+});
+
+describe("sanitasiNamaBerkas", () => {
+  it("membersihkan path traversal dan karakter ilegal", () => {
+    expect(sanitasiNamaBerkas("../../etc/passwd.jpg", "image/jpeg")).toBe("passwd.jpg");
+    expect(sanitasiNamaBerkas("..\\..\\foto<script>.png", "image/png")).toBe("foto_script_.png");
+    expect(sanitasiNamaBerkas("foto normal_12.webp", "image/webp")).toBe("foto_normal_12.webp");
+  });
+
+  it("mengganti nama anonim bila string nama kosong atau hanya titik", () => {
+    expect(sanitasiNamaBerkas("", "image/jpeg")).toMatch(/^foto_\d+\.jpg$/);
+    expect(sanitasiNamaBerkas("...", "image/png")).toMatch(/^foto_\d+\.png$/);
   });
 });

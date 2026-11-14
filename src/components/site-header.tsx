@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IconArrowRight } from "@/components/icons";
 
 type Halaman = "beranda" | "cek" | "jurnal" | "tentang";
@@ -57,13 +57,38 @@ export function SiteHeader({
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isHero]);
 
-  // Kunci scroll & tutup dengan Escape saat menu mobile terbuka
+  const mobileRef = useRef<HTMLDivElement>(null);
+
+  // Kunci scroll, tutup dengan Escape & trap focus saat menu mobile terbuka
   useEffect(() => {
     if (!menuBuka) return;
     document.body.style.overflow = "hidden";
+
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setMenuBuka(false);
+      if (e.key === "Escape") {
+        setMenuBuka(false);
+        return;
+      }
+
+      if (e.key === "Tab" && mobileRef.current) {
+        const fokusElemen = mobileRef.current.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        );
+        if (fokusElemen.length === 0) return;
+
+        const first = fokusElemen[0];
+        const last = fokusElemen[fokusElemen.length - 1];
+
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     };
+
     window.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = "";
@@ -171,6 +196,7 @@ export function SiteHeader({
 
       {/* Panel menu HP: putih, meluncur dari kiri */}
       <div
+        ref={mobileRef}
         id="menu-mobile"
         aria-hidden={!menuBuka}
         className={`fixed inset-0 z-40 flex flex-col bg-white px-5 pt-[16vh] pb-10 transition-transform duration-[800ms] ease-halus md:hidden ${

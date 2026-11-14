@@ -30,6 +30,14 @@ function galat(status: number, kode: KodeGalat, pesan: string, header?: HeadersI
   return NextResponse.json({ error: pesan, kode }, { status, headers: header });
 }
 
+/** Sanitasi nama file untuk mencegah path traversal dan karakter berbahaya di backend upstream */
+export function sanitasiNamaBerkas(namaMentah: string, tipe: string): string {
+  const ekstensi = tipe === "image/jpeg" ? "jpg" : tipe === "image/png" ? "png" : "webp";
+  const bersih = namaMentah.replace(/^.*[/\\]/, "").replace(/[^a-zA-Z0-9._-]/g, "_").trim();
+  const aman = bersih.replace(/^\.+/, "").replace(/\.{2,}/g, ".");
+  return aman || `foto_${Date.now()}.${ekstensi}`;
+}
+
 // multipart menambah sedikit header di sekitar file
 const BATAS_BODY = UKURAN_MAKS + 64 * 1024;
 
@@ -88,7 +96,10 @@ export async function POST(req: NextRequest) {
 
   // 3. Teruskan ke backend dengan batas waktu
   const form = new FormData();
-  const nama = file instanceof File && file.name ? file.name : `foto.${tipe.split("/")[1]}`;
+  const nama =
+    file instanceof File && file.name
+      ? sanitasiNamaBerkas(file.name, tipe)
+      : `foto_${Date.now()}.${tipe === "image/jpeg" ? "jpg" : tipe === "image/png" ? "png" : "webp"}`;
   form.append("file", new Blob([isi], { type: tipe }), nama);
 
   let res: Response;
