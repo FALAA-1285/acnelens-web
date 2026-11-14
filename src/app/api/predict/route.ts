@@ -4,6 +4,12 @@ import { buatBatasLaju } from "@/lib/batas-laju";
 import { jenisGambar, PESAN_FORMAT, PESAN_UKURAN, UKURAN_MAKS } from "@/lib/validasi-foto";
 
 /**
+ * Batas waktu eksekusi Serverless Function di Vercel (maksimal 60 detik di paket Hobby).
+ * Diperlukan agar fetch ke backend dengan batas 30 detik tidak diputus prematur oleh Vercel (default 15 detik).
+ */
+export const maxDuration = 60;
+
+/**
  * Proxy (BFF) ke backend Python: POST multipart/form-data, field "file".
  *
  * Semua galat dikembalikan sebagai { error, kode } dengan pesan yang aman
