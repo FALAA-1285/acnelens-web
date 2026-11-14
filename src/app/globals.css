@@ -17,6 +17,22 @@
   --font-serif: "Instrument Serif", ui-serif, Georgia, serif;
 }
 
+html,
+body,
+* {
+  /* Hilangkan scrollbar untuk Firefox, Chrome 121+, Edge, dsb */
+  scrollbar-width: none;
+  /* Hilangkan scrollbar untuk IE dan Edge lawas */
+  -ms-overflow-style: none;
+}
+
+/* Hilangkan scrollbar untuk browser berbasis WebKit/Blink (Chrome, Edge, Safari, Opera) */
+::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
 body {
   background: #ffffff;
   color: var(--color-body);
