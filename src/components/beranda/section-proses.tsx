@@ -130,13 +130,14 @@ export function SectionProses() {
             varian="scale"
             className="relative mx-auto mb-10 aspect-[826/725] w-full max-w-[560px] lg:absolute lg:top-[100px] lg:left-1/2 lg:mb-0 lg:aspect-auto lg:h-[760px] lg:w-[70%] lg:max-w-none lg:-translate-x-1/2"
           >
-            <div className="absolute inset-0 overflow-hidden" style={MASK_ELIPS}>
+            <div className="absolute inset-0 overflow-hidden bg-[#f0ebe5]" style={MASK_ELIPS}>
               <Parallax speed={0.08} className="absolute -inset-y-[6%] inset-x-0">
                 <Image
                   src={GAMBAR.prosesSorotan}
                   alt=""
                   fill
                   sizes="(max-width: 1024px) 100vw, 70vw"
+                  decoding="async"
                   className="object-cover object-[50%_30%]"
                 />
               </Parallax>

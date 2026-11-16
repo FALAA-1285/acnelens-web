@@ -41,7 +41,7 @@ function Kartu({
       className={`group block ${besar ? "" : "lg:grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)] lg:items-center lg:gap-6"}`}
     >
       <div
-        className={`relative overflow-hidden rounded-[24px] bg-mist ${
+        className={`relative overflow-hidden rounded-[24px] bg-[#f0ebe5] ${
           besar ? "aspect-[16/10]" : "aspect-[4/3] lg:aspect-[4/5]"
         }`}
       >
@@ -50,6 +50,7 @@ function Kartu({
           alt=""
           fill
           sizes={besar ? "(max-width: 1024px) 100vw, 60vw" : "(max-width: 1024px) 50vw, 20vw"}
+          decoding="async"
           className="object-cover transition-transform duration-[1.2s] ease-halus group-hover:scale-105"
         />
       </div>

@@ -19,18 +19,22 @@ function KartuKelas({ id }: { id: KelasId }) {
       data-slide
       className="group flex w-[78vw] shrink-0 snap-start flex-col sm:w-[320px] lg:w-[340px]"
     >
-      <div className="relative aspect-[4/5] overflow-hidden rounded-[20px] bg-mist">
+      <div className="relative aspect-[4/5] overflow-hidden rounded-[20px] bg-[#f0ebe5]">
         <Image
           src={gambar1}
           alt={`Contoh ${k.nama.toLowerCase()}`}
           fill
           sizes="(max-width: 640px) 78vw, 360px"
+          decoding="async"
           className="object-cover transition-transform duration-[1.2s] ease-halus group-hover:scale-105"
         />
         <Image
           src={gambar2}
           alt=""
           fill
+          loading="lazy"
+          fetchPriority="low"
+          decoding="async"
           sizes="(max-width: 640px) 78vw, 360px"
           className="object-cover opacity-0 transition-[opacity,transform] duration-[1.2s] ease-halus group-hover:scale-105 group-hover:opacity-100"
         />
@@ -86,7 +90,7 @@ export function SectionKelas() {
       <div className="mt-14 grid grid-cols-1 items-center gap-12 sm:mt-20 lg:grid-cols-2 lg:gap-0">
         <Reveal
           varian="buka"
-          className="relative aspect-[4/3] w-full overflow-hidden sm:aspect-[16/11] lg:aspect-auto lg:h-[92vh] lg:max-h-[880px] lg:min-h-[620px]"
+          className="relative aspect-[4/3] w-full overflow-hidden bg-[#f0ebe5] sm:aspect-[16/11] lg:aspect-auto lg:h-[92vh] lg:max-h-[880px] lg:min-h-[620px]"
         >
           <Parallax speed={0.1} className="absolute -inset-y-[12%] inset-x-0">
             <Image
@@ -94,6 +98,7 @@ export function SectionKelas() {
               alt="Close-up wajah dengan kulit berbintik dan lembap"
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
+              decoding="async"
               className="object-cover"
             />
           </Parallax>

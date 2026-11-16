@@ -7,18 +7,14 @@ type Varian = "up" | "fade" | "buka" | "scale" | "lines";
 type GayaReveal = CSSProperties & { "--reveal-delay": string };
 
 /*
- * Semua <Reveal> di halaman memakai SATU IntersectionObserver dan SATU pemeriksa
- * scroll bersama (sebelumnya tiap elemen punya observer + listener scroll sendiri,
- * sehingga setiap event scroll memicu puluhan getBoundingClientRect()).
+ * Semua <Reveal> di halaman memakai SATU IntersectionObserver bersama.
+ * Menggunakan rootMargin positif (250px di bawah) agar elemen mulai dibuka dan
+ * gambar mulai diunduh SEBELUM masuk ke viewport. Hal ini mencegah gambar
+ * telat terender saat pengguna menggulir.
  *
- * Pemeriksa scroll tetap dibutuhkan: saat scroll cepat (lempar scroll, tombol End,
- * anchor link) elemen kecil bisa melompati viewport di antara dua pemeriksaan
- * observer dan tidak pernah terbuka. Pemeriksa ini juga membuka elemen yang sudah
- * terlewat di atas viewport. Ia hanya membaca elemen yang belum terbuka, maksimal
- * sekali per frame, dan berhenti sendiri saat semua sudah terbuka.
+ * Listener scroll dihapus dari pemeriksaan frame-per-frame agar tidak memicu
+ * layout thrashing (getBoundingClientRect pada puluhan elemen sekaligus).
  */
-const BATAS_BAWAH = 0.92; // elemen dibuka bila tepi atasnya < 92% tinggi viewport
-
 const menunggu = new Set<Element>();
 let observerBersama: IntersectionObserver | null = null;
 let frame = 0;
@@ -27,14 +23,17 @@ function buka(el: Element) {
   el.classList.add("is-in");
   menunggu.delete(el);
   observerBersama?.unobserve(el);
-  if (menunggu.size === 0) window.removeEventListener("scroll", jadwalkanPeriksa);
 }
 
 function periksa() {
   frame = 0;
-  const batas = window.innerHeight * BATAS_BAWAH;
-  // baca semua posisi dulu, baru ubah kelas (hindari layout thrashing)
-  const siap = [...menunggu].filter((el) => el.getBoundingClientRect().top < batas);
+  if (menunggu.size === 0) return;
+  const batas = window.innerHeight + 250;
+  // Buka elemen yang sudah berada di dalam atau dekat viewport (mis. anchor link / reload)
+  const siap = [...menunggu].filter((el) => {
+    const top = el.getBoundingClientRect().top;
+    return top < batas;
+  });
   siap.forEach(buka);
 }
 
@@ -49,19 +48,22 @@ function amati(el: Element): () => void {
   }
   observerBersama ??= new IntersectionObserver(
     (entries) => {
-      for (const entry of entries) if (entry.isIntersecting) buka(entry.target);
+      for (const entry of entries) {
+        if (entry.isIntersecting) buka(entry.target);
+      }
     },
-    { rootMargin: "0px 0px -8% 0px", threshold: 0 },
+    // Margin 250px di bawah agar konten siap sebelum terlihat pengguna
+    { rootMargin: "250px 0px 50px 0px", threshold: 0 },
   );
-  if (menunggu.size === 0) window.addEventListener("scroll", jadwalkanPeriksa, { passive: true });
+
   menunggu.add(el);
   observerBersama.observe(el);
+  // Periksa sekali saat mount (untuk elemen yang berada di atas viewport awal)
   jadwalkanPeriksa();
 
   return () => {
     menunggu.delete(el);
     observerBersama?.unobserve(el);
-    if (menunggu.size === 0) window.removeEventListener("scroll", jadwalkanPeriksa);
   };
 }
 

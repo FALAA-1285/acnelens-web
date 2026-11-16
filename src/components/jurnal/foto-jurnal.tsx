@@ -22,13 +22,15 @@ export function FotoJurnal({
 }) {
   return (
     <ViewTransition name={`jurnal-${slug}`} share="morph" default="none">
-      <div className={`relative overflow-hidden bg-mist ${className}`}>
+      <div className={`relative overflow-hidden bg-[#f0ebe5] ${className}`}>
         <Image
           src={src}
           alt=""
           fill
-          loading={priority ? "eager" : undefined}
-          fetchPriority={priority ? "high" : undefined}
+          preload={priority}
+          loading={priority ? "eager" : "lazy"}
+          fetchPriority={priority ? "high" : "auto"}
+          decoding="async"
           sizes={sizes}
           className={`object-cover ${
             zoomHover ? "scale-110 transition-transform duration-[1.2s] ease-halus group-hover:scale-100" : ""

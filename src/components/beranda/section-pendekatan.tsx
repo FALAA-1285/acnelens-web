@@ -62,6 +62,7 @@ export function SectionPendekatan() {
                 src={GAMBAR.pendekatanUtama}
                 speed={0.1}
                 sizes="(max-width: 1024px) 70vw, 36vw"
+                priority
                 className="h-full w-full rounded-[200px_200px_28px_28px]"
               />
             </div>

@@ -43,18 +43,28 @@ export function SiteHeader({
   useEffect(() => {
     if (!isHero) return;
     let lastY = window.scrollY;
+    let rafId = 0;
     const handleScroll = () => {
-      const y = window.scrollY;
-      setScrolled(y > 40);
-      // sembunyi saat scroll ke bawah, muncul lagi saat scroll ke atas
-      if (Math.abs(y - lastY) > 6) {
-        setTersembunyi(y > lastY && y > 160);
-        lastY = y;
-      }
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = 0;
+        const y = window.scrollY;
+        const isScrolled = y > 40;
+        setScrolled((prev) => (prev !== isScrolled ? isScrolled : prev));
+        // sembunyi saat scroll ke bawah, muncul lagi saat scroll ke atas
+        if (Math.abs(y - lastY) > 6) {
+          const isHide = y > lastY && y > 160;
+          setTersembunyi((prev) => (prev !== isHide ? isHide : prev));
+          lastY = y;
+        }
+      });
     };
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      cancelAnimationFrame(rafId);
+    };
   }, [isHero]);
 
   const mobileRef = useRef<HTMLDivElement>(null);

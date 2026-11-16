@@ -39,9 +39,9 @@ export function FooterSitus({ tanpaAjakan = false }: { tanpaAjakan?: boolean }) 
     <footer className={`relative bg-white pb-10 text-ink ${tanpaAjakan ? "border-t border-ink/10 pt-20" : ""}`}>
       {/* Pita foto besar dengan parallax */}
       {!tanpaAjakan && (
-        <div className="relative h-[60vh] overflow-hidden sm:h-[75vh] lg:h-[90vh]">
+        <div className="relative h-[60vh] overflow-hidden bg-[#2a2a2a] sm:h-[75vh] lg:h-[90vh]">
           <Parallax speed={0.15} className="absolute -inset-y-[15%] inset-x-0">
-            <Image src={GAMBAR.footer} alt="" fill sizes="100vw" className="object-cover brightness-[1.05]" />
+            <Image src={GAMBAR.footer} alt="" fill sizes="100vw" decoding="async" className="object-cover brightness-[1.05]" />
           </Parallax>
         </div>
       )}

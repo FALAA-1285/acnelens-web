@@ -5,8 +5,8 @@ import { useEffect, useRef, type ReactNode } from "react";
 /**
  * Menggeser isi secara vertikal relatif terhadap posisi elemen di viewport.
  * `speed` 0.1–0.3 cocok untuk gambar; nilai negatif = bergerak berlawanan arah.
- * Pasang pada wrapper dengan overflow-hidden, dan buat anak sedikit lebih tinggi
- * (mis. `-inset-y-[12%]`) supaya tepi gambar tidak terlihat.
+ * Menggunakan pengukuran ter-cache (tidak memicu getBoundingClientRect saat scroll)
+ * untuk menghindari forced reflow / layout thrashing yang menyebabkan scroll tersendat.
  */
 export function Parallax({
   speed = 0.15,
@@ -30,39 +30,70 @@ export function Parallax({
 
     let raf = 0;
     let visible = false;
+    let lastAppliedY = NaN;
+
+    // Cache layout agar tidak memicu DOM reflow saat event scroll
+    let docTop = 0;
+    let elHeight = 0;
+    let sisa = 0;
+    let vh = typeof window !== "undefined" ? window.innerHeight : 800;
+
+    const ukur = () => {
+      const rect = el.getBoundingClientRect();
+      docTop = rect.top + window.scrollY;
+      elHeight = rect.height;
+      vh = window.innerHeight;
+      const parent = el.parentElement;
+      sisa = parent ? (el.offsetHeight - parent.clientHeight) / 2 : 0;
+    };
 
     const update = () => {
       raf = 0;
-      const rect = el.getBoundingClientRect();
-      const vh = window.innerHeight;
-      // 0 saat elemen tepat di tengah viewport
-      const offset = rect.top + rect.height / 2 - vh / 2;
-      // Batasi geseran ke sisa tepi gambar agar latar tidak pernah bolong.
-      // Untuk wrapper yang tidak lebih tinggi dari induknya (mis. dekorasi), tanpa batas.
-      const parent = el.parentElement;
-      const sisa = parent ? (el.offsetHeight - parent.clientHeight) / 2 : 0;
+      if (!visible) return;
+      // Hitung posisi relatif ke viewport tanpa getBoundingClientRect()
+      const currentTop = docTop - window.scrollY;
+      const offset = currentTop + elHeight / 2 - vh / 2;
       let y = -offset * speed;
       if (sisa > 0) y = Math.max(-sisa, Math.min(sisa, y));
-      el.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0)`;
+
+      // Abaikan jika perubahan subpixel terlalu kecil (hemat repaint GPU)
+      if (Math.abs(y - lastAppliedY) >= 0.2 || isNaN(lastAppliedY)) {
+        lastAppliedY = y;
+        el.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0)`;
+      }
     };
+
     const onScroll = () => {
       if (visible && !raf) raf = requestAnimationFrame(update);
     };
 
-    const io = new IntersectionObserver(([e]) => {
-      visible = e.isIntersecting;
-      if (visible) onScroll();
-    });
+    const onResize = () => {
+      ukur();
+      update();
+    };
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        visible = entry.isIntersecting;
+        if (visible) {
+          ukur();
+          onScroll();
+        }
+      },
+      { rootMargin: "150px 0px 150px 0px" },
+    );
     io.observe(el.parentElement ?? el);
 
+    ukur();
     update();
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll, { passive: true });
+    window.addEventListener("resize", onResize, { passive: true });
+
     return () => {
       io.disconnect();
       cancelAnimationFrame(raf);
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("resize", onResize);
     };
   }, [speed, hanyaLebar]);
 

@@ -74,12 +74,13 @@ export function TipsFoto() {
         <div className="mt-14 grid grid-cols-1 gap-x-6 gap-y-14 md:grid-cols-3">
           {TIPS.map((t, i) => (
             <Reveal key={t.judul} delay={i * 120} className={i === 1 ? "md:mt-16" : ""}>
-              <div className="group relative aspect-[4/5] overflow-hidden rounded-[20px] bg-mist">
+              <div className="group relative aspect-[4/5] overflow-hidden rounded-[20px] bg-[#f0ebe5]">
                 <Image
                   src={t.gambar}
                   alt=""
                   fill
                   sizes="(max-width: 768px) 100vw, 33vw"
+                  decoding="async"
                   className="object-cover transition-transform duration-[1.2s] ease-halus group-hover:scale-105"
                 />
               </div>
@@ -99,11 +100,9 @@ export function TipsFoto() {
 export function AlurSingkat() {
   return (
     <section className="relative overflow-hidden bg-blush py-24 sm:py-32">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-[0.07]"
-        style={{ backgroundImage: `url('${GAMBAR.tekstur}')`, backgroundSize: "cover" }}
-      />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden opacity-[0.07]">
+        <Image src={GAMBAR.tekstur} alt="" fill sizes="100vw" decoding="async" className="object-cover" />
+      </div>
       <div className="relative mx-auto max-w-[1280px] px-5 sm:px-6">
         <div className="text-center">
           <Reveal varian="fade">
@@ -174,12 +173,13 @@ export function KelasSingkat() {
               return (
                 <Reveal key={id} delay={i * 120}>
                   <Link href="/tentang#jenis" className="group block">
-                    <div className="relative aspect-[3/4] overflow-hidden rounded-[999px_999px_20px_20px] bg-mist">
+                    <div className="relative aspect-[3/4] overflow-hidden rounded-[999px_999px_20px_20px] bg-[#f0ebe5]">
                       <Image
                         src={GAMBAR.kelas[id][0]}
                         alt={`Contoh ${k.nama.toLowerCase()}`}
                         fill
                         sizes="(max-width: 640px) 33vw, 20vw"
+                        decoding="async"
                         className="object-cover transition-transform duration-[1.2s] ease-halus group-hover:scale-105"
                       />
                     </div>

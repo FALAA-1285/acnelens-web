@@ -32,17 +32,18 @@ export function GambarParallax({
   priority?: boolean;
 }) {
   return (
-    <Reveal varian="buka" className={`relative overflow-hidden ${className}`}>
+    <Reveal varian="buka" className={`relative overflow-hidden bg-[#f0ebe5] ${className}`}>
       <Parallax speed={speed} className="absolute -inset-y-[14%] inset-x-0">
         <Image
           src={src}
           alt={alt}
           fill
           sizes={sizes}
-          // Next 16: `priority` deprecated → muat segera + prioritas tinggi untuk gambar LCP
-          loading={priority ? "eager" : undefined}
-          fetchPriority={priority ? "high" : undefined}
-          className="object-cover"
+          preload={priority}
+          loading={priority ? "eager" : "lazy"}
+          fetchPriority={priority ? "high" : "auto"}
+          decoding="async"
+          className="object-cover transition-opacity duration-500 ease-out"
         />
       </Parallax>
     </Reveal>

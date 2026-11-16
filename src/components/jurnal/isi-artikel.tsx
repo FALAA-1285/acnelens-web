@@ -49,9 +49,9 @@ export function IsiArtikel({ isi }: { isi: Blok[] }) {
           case "gambar":
             return (
               <figure key={i} className="my-20 -mx-5 sm:-mx-10 lg:-mx-28">
-                <Reveal varian="buka" className="relative aspect-[16/10] overflow-hidden bg-mist">
+                <Reveal varian="buka" className="relative aspect-[16/10] overflow-hidden bg-[#f0ebe5]">
                   <Parallax speed={0.08} className="absolute -inset-y-[10%] inset-x-0">
-                    <Image src={b.src} alt="" fill sizes="(max-width: 1024px) 100vw, 1100px" className="object-cover" />
+                    <Image src={b.src} alt="" fill sizes="(max-width: 1024px) 100vw, 1100px" decoding="async" className="object-cover" />
                   </Parallax>
                 </Reveal>
                 {b.keterangan && (

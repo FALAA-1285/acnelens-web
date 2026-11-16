@@ -9,7 +9,7 @@ export function SectionAjakan() {
   return (
     <section id="ajakan" className="relative flex min-h-[80vh] items-center overflow-hidden bg-ink text-white">
       <Parallax speed={0.18} className="absolute -inset-y-[18%] inset-x-0">
-        <Image src={GAMBAR.ajakan} alt="" fill sizes="100vw" className="object-cover" />
+        <Image src={GAMBAR.ajakan} alt="" fill sizes="100vw" decoding="async" className="object-cover" />
       </Parallax>
       <div className="absolute inset-0 bg-black/35" />
 

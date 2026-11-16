@@ -15,7 +15,9 @@ export function HeroBeranda() {
   // Parallax ditulis langsung ke style elemen (bukan lewat state), supaya
   // scroll tidak membuat seluruh hero dirender ulang setiap frame.
   const videoRef = useRef<HTMLDivElement>(null);
+  const videoElRef = useRef<HTMLVideoElement>(null);
   const teksRef = useRef<HTMLDivElement>(null);
+  const heroVisible = useRef(true);
 
   useEffect(() => {
     const mqMobile = window.matchMedia("(max-width: 767px)");
@@ -31,12 +33,35 @@ export function HeroBeranda() {
     // judul & CTA mulai beranimasi setelah layar pembuka selesai
     const lepas = tungguPreloader(() => setLoaded(true));
 
+    // Jeda video dan hentikan rAF parallax saat hero tidak terlihat (hemat GPU & CPU)
+    const el = sectionRef.current;
+    let io: IntersectionObserver | null = null;
+    if (el) {
+      io = new IntersectionObserver(
+        ([entry]) => {
+          const isVis = entry.isIntersecting;
+          heroVisible.current = isVis;
+          const vid = videoElRef.current;
+          if (vid) {
+            if (isVis && !reduceMotion) {
+              vid.play().catch(() => {});
+            } else {
+              vid.pause();
+            }
+          }
+        },
+        { threshold: 0 },
+      );
+      io.observe(el);
+    }
+
     return () => {
       lepas();
+      io?.disconnect();
       mqMobile.removeEventListener("change", sync);
       mqMotion.removeEventListener("change", sync);
     };
-  }, []);
+  }, [reduceMotion]);
 
   useEffect(() => {
     const terapkan = () => {
@@ -52,14 +77,13 @@ export function HeroBeranda() {
     };
     terapkan();
 
-    // maksimal satu update per frame, dan hanya selama hero masih terlihat
+    // maksimal satu update per frame, dan hanya selama hero masih terlihat (tanpa getBoundingClientRect)
     let rafId = 0;
     const handleScroll = () => {
       if (rafId) return;
       rafId = requestAnimationFrame(() => {
         rafId = 0;
-        const el = sectionRef.current;
-        if (el && el.getBoundingClientRect().bottom > 0) terapkan();
+        if (heroVisible.current) terapkan();
       });
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -90,6 +114,7 @@ export function HeroBeranda() {
           ) : (
             // Hanya satu video yang dirender, jadi browser tidak mengunduh keduanya
             <video
+              ref={videoElRef}
               key={isMobile ? "m" : "d"}
               loop
               muted

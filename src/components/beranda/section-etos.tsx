@@ -20,11 +20,9 @@ const ETOS = [
 export function SectionEtos() {
   return (
     <section id="ethos" className="relative overflow-hidden py-24 sm:py-36">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-[0.08]"
-        style={{ backgroundImage: `url('${GAMBAR.tekstur}')`, backgroundSize: "cover" }}
-      />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden opacity-[0.08]">
+        <Image src={GAMBAR.tekstur} alt="" fill sizes="100vw" decoding="async" className="object-cover" />
+      </div>
       <div className="relative mx-auto max-w-[1280px] px-5 sm:px-6">
         <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-12">
           <div className="lg:col-span-7">
