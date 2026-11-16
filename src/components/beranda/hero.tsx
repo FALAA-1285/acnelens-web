@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { IconArrowRight } from "@/components/icons";
 import { GAMBAR } from "@/lib/gambar";
 import { tungguPreloader } from "@/components/motion/preloader";
+import { pantauGulir } from "@/components/motion/gulir";
 
 export function HeroBeranda() {
   const [loaded, setLoaded] = useState(false);
@@ -64,8 +65,8 @@ export function HeroBeranda() {
   }, [reduceMotion]);
 
   useEffect(() => {
-    const terapkan = () => {
-      const y = reduceMotion ? 0 : window.scrollY;
+    const terapkan = (scrollY: number) => {
+      const y = reduceMotion ? 0 : scrollY;
       const hp = isMobile === true;
       if (videoRef.current) {
         videoRef.current.style.transform = `translate3d(0, ${y * (hp ? 0.15 : 0.28)}px, 0)`;
@@ -75,22 +76,12 @@ export function HeroBeranda() {
         teksRef.current.style.transform = `translate3d(0, -${y * (hp ? 0.16 : 0.22)}px, 0)`;
       }
     };
-    terapkan();
+    terapkan(window.scrollY);
 
-    // maksimal satu update per frame, dan hanya selama hero masih terlihat (tanpa getBoundingClientRect)
-    let rafId = 0;
-    const handleScroll = () => {
-      if (rafId) return;
-      rafId = requestAnimationFrame(() => {
-        rafId = 0;
-        if (heroVisible.current) terapkan();
-      });
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      cancelAnimationFrame(rafId);
-    };
+    // Ikut posisi scroll Lenis di frame yang sama (lihat gulir.ts), hanya selama hero terlihat
+    return pantauGulir((y) => {
+      if (heroVisible.current) terapkan(y);
+    });
   }, [isMobile, reduceMotion]);
 
   const poster = isMobile ? GAMBAR.heroPosterMobile : GAMBAR.heroPoster;
@@ -167,7 +158,7 @@ export function HeroBeranda() {
         >
           <Link
             href="/cek"
-            className="group relative flex items-center justify-between rounded-full border border-white/60 bg-[#ffffffe6] py-2 pr-2 pl-5 text-ink shadow-[0_20px_50px_rgba(0,0,0,0.25)] backdrop-blur-[24px] transition-all duration-300 hover:bg-white hover:shadow-[0_25px_60px_rgba(0,0,0,0.38)] sm:py-2.5 sm:pr-2.5 sm:pl-7"
+            className="group relative flex items-center justify-between rounded-full border border-white/60 bg-[#ffffffe6] py-2 pr-2 pl-5 text-ink shadow-[0_20px_50px_rgba(0,0,0,0.25)] transition-all duration-300 hover:bg-white hover:shadow-[0_25px_60px_rgba(0,0,0,0.38)] sm:py-2.5 sm:pr-2.5 sm:pl-7"
           >
             <span className="text-[11px] font-semibold tracking-[0.08em] text-ink uppercase underline decoration-ink/40 underline-offset-4 transition-colors group-hover:decoration-ink sm:text-[13px] sm:tracking-[0.1em]">
               MULAI CEK KULIT SEKARANG

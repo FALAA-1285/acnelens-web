@@ -27,7 +27,10 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   images: {
-    formats: ["image/avif", "image/webp"],
+    // WebP saja: AVIF ~50% lebih lama di-encode (permintaan pertama tiap ukuran di
+    // Vercel jadi lambat → gambar telat muncul) dan lebih berat di-decode browser
+    // (decode saat scroll → tersendat). Lihat docs next/image `formats`.
+    formats: ["image/webp"],
     minimumCacheTTL: 2592000, // 30 hari cache CDN Vercel untuk gambar yang dioptimasi
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],

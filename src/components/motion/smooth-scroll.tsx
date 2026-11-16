@@ -2,9 +2,14 @@
 
 import { useEffect } from "react";
 import Lenis from "lenis";
+import { daftarkanLenis } from "@/components/motion/gulir";
+import { muatGambarLebihAwal } from "@/components/motion/muat-dini";
 
 /** Smooth scroll ala inersia (Lenis). Dimatikan bila pengguna memilih reduced motion. */
 export function SmoothScroll() {
+  // Unduh gambar lebih awal — berlaku juga untuk pengguna reduced motion
+  useEffect(() => muatGambarLebihAwal(), []);
+
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
@@ -14,6 +19,10 @@ export function SmoothScroll() {
       smoothWheel: true,
       wheelMultiplier: 0.9,
     });
+
+    // Parallax & hero dihitung di frame yang sama dengan posisi scroll Lenis
+    const sumber = daftarkanLenis();
+    const offScroll = lenis.on("scroll", (l: Lenis) => sumber.kirim(l.scroll));
 
     let raf = 0;
     const loop = (time: number) => {
@@ -39,6 +48,8 @@ export function SmoothScroll() {
     return () => {
       cancelAnimationFrame(raf);
       document.removeEventListener("click", onClick);
+      offScroll();
+      sumber.lepas();
       lenis.destroy();
     };
   }, []);
